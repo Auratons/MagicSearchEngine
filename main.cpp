@@ -11,14 +11,13 @@
  * Created on 21 March 2017, 17:29
  */
 
-#include <cstdlib>
 
-using namespace std;
+#include "IDatabaseFetch.hpp"
+#include "Card.hpp"
 
-/*
- * 
- */
+
 int main(int argc, char** argv) {
+    
 
     return 0;
 }
