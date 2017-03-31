@@ -12,7 +12,7 @@ AC_SUBST(PACKAGE_YEAR, [$(LANG=C date '+%Y')])
 AC_PROG_CXX
 
 # Checks for libraries.
-PKG_CHECK_MODULES([JSONCPP], [jsoncpp])
+#PKG_CHECK_MODULES([JSONCPP], [jsoncpp])
 
 # Checks for header files.
 AC_STDC_HEADERS
