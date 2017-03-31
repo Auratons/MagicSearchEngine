@@ -29,8 +29,8 @@
  * Created on 21 March 2017, 19:32
  */
 
-#ifndef IDATABASEFETCH_HPP
-#define IDATABASEFETCH_HPP
+#ifndef DATABASE_HPP
+#define DATABASE_HPP
 
 #include <iostream>
 #include <fstream>
@@ -40,37 +40,36 @@
 #include "src/json.hpp"
 
 namespace magicSearchEngine {
-    using json = nlohmann::json;
 
     /*
      * Serves as a contract for all possible implementations
      * of database.
      */
     class Database {
-    public:
+    public:        
         virtual void
         load_database() = 0;
 
         virtual std::vector<Card>
-        get_cards() = 0;
+        get_cards() const = 0;
 
         virtual std::map<std::string, std::string>
-        get_types() = 0;
+        get_types() const = 0;
 
         virtual std::map<std::string, std::string>
-        get_subtypes() = 0;
+        get_subtypes() const = 0;
 
         virtual std::map<std::string, std::string>
-        get_supertypes() = 0;
+        get_supertypes() const = 0;
 
         virtual std::map<std::string, std::string>
-        get_layout() = 0;
+        get_layout() const = 0;
 
         virtual std::map<std::string, std::string>
-        get_colors() = 0;
+        get_colors() const = 0;
 
         virtual std::map<std::string, std::string>
-        get_mana() = 0;
+        get_mana() const = 0;
 
         virtual ~Database() {
         };
@@ -78,6 +77,19 @@ namespace magicSearchEngine {
 
     class JSONDatabase : public Database {
     private:
+        /* 
+         * Question: Shall be used boolean indicator of already loaded
+         * database or some magic with a static member? The first solution
+         * needs if in each getter function which could have small-to-medium
+         * performance decrease (frequent use of getters), but the 
+         * second means allocating ~400 strings within construction of 
+         * JSONDatabase object. In order the construction
+         * to be cheap I decided to have a status boolean variable.
+         */
+        bool was_db_loaded = false;
+        const char * db_not_loaded =
+                "Database access before it was loaded. Firstly, call JSONDatabase::load_database().";
+
         std::vector<Card> cards;
         std::map<std::string, std::string> types;
         std::map<std::string, std::string> subtypes;
@@ -91,33 +103,54 @@ namespace magicSearchEngine {
         load_database() override;
 
         std::vector<Card>
-        get_cards() override;
+        get_cards() const override;
 
         std::map<std::string, std::string>
-        get_types() override;
+        get_types() const override;
 
         std::map<std::string, std::string>
-        get_subtypes() override;
+        get_subtypes() const override;
 
         std::map<std::string, std::string>
-        get_supertypes() override;
+        get_supertypes() const override;
 
         std::map<std::string, std::string>
-        get_layout() override;
+        get_layout() const override;
 
         std::map<std::string, std::string>
-        get_colors() override;
+        get_colors() const override;
 
         std::map<std::string, std::string>
-        get_mana() override;
+        get_mana() const override;
 
         ~JSONDatabase() {
         }
     private:
         std::vector<Card>
-        load_cards(const json & data);
+        load_cards(const nlohmann::json & data);
+    };
+
+    /*
+     * This exception is being used for throwing in case of 
+     * unfinished initialization (of the JSONDatabase).
+     */
+
+    class bad_optional_access : public std::exception {
+    protected:
+        std::string msg;
+    public:
+
+        bad_optional_access(const std::string & str) : msg(str) {
+        }
+
+        virtual const char*
+        what() const throw() {
+            return msg.c_str();
+        }
+        
+        ~bad_optional_access() throw() {}
     };
 }
 
-#endif /* IDATABASEFETCH_HPP */
+#endif /* DATABASE_HPP */
 
