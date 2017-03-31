@@ -26,30 +26,31 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <exception>
 #include "src/database.hpp"
 #include "src/card.hpp"
 #include "src/json.hpp"
 
 namespace magicSearchEngine {
-    using json = nlohmann::json;
-
+    using json = nlohmann::json;    
+    
     /*
      * Only definitions of member functions of the JSON
      * database implementation follows.
      */
 
     /*
-     * This instantiates maps which serve as a database of types,
+     * This instantiates maps which serve as a databases of types,
      * where all card members have pointers to strings in these maps.
      * Motivation: space efficiency, fast lookup, simple outputting
      * of type's string representation.
      * 
      * All know -types, colors etc. you can find in comprehensive rules at:
      * http://magic.wizards.com/en/game-info/gameplay/rules-and-formats/rules
-     */    
+     */
     void
     JSONDatabase::load_database() {
-        std::ifstream ifs{"./AllCards.json"};
+        std::ifstream ifs{"./src/AllCards.json"};
         json data = json::parse(ifs);
         // <editor-fold defaultstate="collapsed" desc="types instantiation">
         types["general"] = "general";
@@ -451,6 +452,8 @@ namespace magicSearchEngine {
         // </editor-fold>
         cards = load_cards(data);
         ifs.close();
+        
+        was_db_loaded = true;
     }
 
     std::vector<Card>
@@ -458,7 +461,7 @@ namespace magicSearchEngine {
         std::vector<Card> cards;
 
         for (auto && card : data) {
-            Card entry{card};
+            Card entry{card, this};
             cards.push_back(entry);
         }
 
@@ -466,39 +469,58 @@ namespace magicSearchEngine {
     }
 
     std::map<std::string, std::string>
-    JSONDatabase::get_types() {
-        return types;
+    JSONDatabase::get_types() const {
+        if (was_db_loaded)
+            return types;
+        else
+            throw bad_optional_access(db_not_loaded);
     }
 
     std::map<std::string, std::string>
-    JSONDatabase::get_subtypes() {
-        return subtypes;
+    JSONDatabase::get_subtypes() const {
+        if (was_db_loaded)
+            return subtypes;
+        else
+            throw bad_optional_access(db_not_loaded);
     }
 
     std::map<std::string, std::string>
-    JSONDatabase::get_supertypes() {
-        return supertypes;
+    JSONDatabase::get_supertypes() const {
+        if (was_db_loaded)
+            return supertypes;
+        else
+            throw bad_optional_access(db_not_loaded);
     }
 
     std::vector<Card>
-    JSONDatabase::get_cards() {
-        return cards;
+    JSONDatabase::get_cards() const {
+        if (was_db_loaded)
+            return cards;
+        else
+            throw bad_optional_access(db_not_loaded);
     }
 
     std::map<std::string, std::string>
-    JSONDatabase::get_layout() {
-        return layout;
+    JSONDatabase::get_layout() const {
+        if (was_db_loaded)
+            return layout;
+        else
+            throw bad_optional_access(db_not_loaded);
     }
 
     std::map<std::string, std::string>
-    JSONDatabase::get_colors() {
-        return colors;
+    JSONDatabase::get_colors() const {
+        if (was_db_loaded)
+            return colors;
+        else
+            throw bad_optional_access(db_not_loaded);
     }
 
     std::map<std::string, std::string>
-    JSONDatabase::get_mana() {
-        return mana;
+    JSONDatabase::get_mana() const {
+        if (was_db_loaded)
+            return mana;
+        else
+            throw bad_optional_access(db_not_loaded);
     }
 }
-
-//tominku prdinku boli me brisko a ty me vubec nelitujes
