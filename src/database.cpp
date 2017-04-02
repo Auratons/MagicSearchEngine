@@ -442,18 +442,39 @@ namespace magicSearchEngine {
         colors["black"] = "black";
         // </editor-fold>
         // <editor-fold defaultstate="collapsed" desc="mana instantiation">
-        mana["blue"] = "blue";
-        mana["white"] = "white";
-        mana["green"] = "green";
-        mana["red"] = "red";
-        mana["black"] = "black";
-        mana["colorless"] = "colorless";
+        mana["U"] = "blue";
+        mana["W"] = "white";
+        mana["G"] = "green";
+        mana["R"] = "red";
+        mana["B"] = "black";
+        mana["C"] = "colorless";
         mana["x"] = "x";
+        mana["W/U"] = "white/blue";
+        mana["W/B"] = "white/black";
+        mana["U/B"] = "blue/black";
+        mana["U/R"] = "blue/red";
+        mana["B/R"] = "black/red";
+        mana["B/G"] = "black/green";
+        mana["R/G"] = "red/green";
+        mana["R/W"] = "red/white";
+        mana["G/W"] = "green/white";
+        mana["G/U"] = "green/blue";
+        mana["2/W"] = "colorless/white";
+        mana["2/U"] = "colorless/blue";
+        mana["2/B"] = "colorless/black";
+        mana["2/R"] = "colorless/red";
+        mana["2/G"] = "colorless/green";
+        mana["W/P"] = "white/-2life";
+        mana["U/P"] = "blue/-2life";
+        mana["B/P"] = "black/-2life";
+        mana["R/P"] = "red/-2life";
+        mana["G/P"] = "green/-2life";
+        mana["S"] = "snow colorless";
         // </editor-fold>
+        was_db_loaded = true;
         cards = load_cards(data);
         ifs.close();
         
-        was_db_loaded = true;
     }
 
     std::vector<Card>
@@ -468,7 +489,7 @@ namespace magicSearchEngine {
         return std::move(cards);
     }
 
-    std::map<std::string, std::string>
+    const std::map<std::string, std::string> &
     JSONDatabase::get_types() const {
         if (was_db_loaded)
             return types;
@@ -476,7 +497,7 @@ namespace magicSearchEngine {
             throw bad_optional_access(db_not_loaded);
     }
 
-    std::map<std::string, std::string>
+    const std::map<std::string, std::string> &
     JSONDatabase::get_subtypes() const {
         if (was_db_loaded)
             return subtypes;
@@ -484,7 +505,7 @@ namespace magicSearchEngine {
             throw bad_optional_access(db_not_loaded);
     }
 
-    std::map<std::string, std::string>
+    const std::map<std::string, std::string> &
     JSONDatabase::get_supertypes() const {
         if (was_db_loaded)
             return supertypes;
@@ -492,7 +513,7 @@ namespace magicSearchEngine {
             throw bad_optional_access(db_not_loaded);
     }
 
-    std::vector<Card>
+    const std::vector<Card> &
     JSONDatabase::get_cards() const {
         if (was_db_loaded)
             return cards;
@@ -500,7 +521,7 @@ namespace magicSearchEngine {
             throw bad_optional_access(db_not_loaded);
     }
 
-    std::map<std::string, std::string>
+    const std::map<std::string, std::string> &
     JSONDatabase::get_layout() const {
         if (was_db_loaded)
             return layout;
@@ -508,7 +529,7 @@ namespace magicSearchEngine {
             throw bad_optional_access(db_not_loaded);
     }
 
-    std::map<std::string, std::string>
+    const std::map<std::string, std::string> &
     JSONDatabase::get_colors() const {
         if (was_db_loaded)
             return colors;
@@ -516,7 +537,7 @@ namespace magicSearchEngine {
             throw bad_optional_access(db_not_loaded);
     }
 
-    std::map<std::string, std::string>
+    const std::map<std::string, std::string> &
     JSONDatabase::get_mana() const {
         if (was_db_loaded)
             return mana;

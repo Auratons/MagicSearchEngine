@@ -39,10 +39,19 @@
 
 namespace magicSearchEngine {
 
+    struct manaCnt {
+    public:
+        const std::string * color;
+        short count;
+
+        manaCnt(std::string * c, short cnt) : color(c), count(cnt) {
+        }
+    };
+
     using layout_t = std::string *;
     using name_t = std::string;
     using names_t = std::vector<std::string>;
-    using manaCost_t = std::vector<std::string>; // TODO
+    using manaCost_t = std::vector<manaCnt>;
     using colors_t = std::vector<std::string *>;
     using supertypes_t = std::vector<std::string *>;
     using types_t = std::vector<std::string *>;
@@ -65,41 +74,42 @@ namespace magicSearchEngine {
     class Card {
     private:
         Database * db;
-        layout_t layout;
-        name_t name;
-        names_t names;
-        manaCost_t manaCost;
-        colors_t colors;
-        supertypes_t supertypes;
-        types_t types;
-        subtypes_t subtypes;
-        text_t text;
-        power_t power;
-        toughness_t toughness;
-        loyalty_t loyalty;
-        hand_t hand;
-        life_t life;
+        const layout_t layout;
+        const name_t name;
+        const names_t names;
+        const manaCost_t manaCost;
+        const colors_t colors;
+        const supertypes_t supertypes;
+        const types_t types;
+        const subtypes_t subtypes;
+        const text_t text;
+        const power_t power;
+        const toughness_t toughness;
+        const loyalty_t loyalty;
+        const hand_t hand;
+        const life_t life;
 
     public:
-        // After quite long time spent by trying to solve this nicely, 
-        // I decided for a macro. #sorryjako
-#define SET(attr, fail) if (card.find("attr") != card.end()) attr = card["attr"]; else attr = fail
+//        // After quite long time spent by trying to solve this nicely, 
+//        // I decided for a macro. #sorryjako
+//#define SET(attr, fail) if (card.find("attr") != card.end()) attr = card["attr"]; else attr = fail
 
-        Card(const card_t & card, Database * dat) : db(dat) {
-            SET(name, "");
-            SET(text, "");
-            SET(power, INT_MIN);
-            SET(toughness, INT_MIN);
-            SET(loyalty, INT_MIN);
-            SET(hand, INT_MIN);
-            SET(life, INT_MIN);
-            layout = parse_layout(card);
-            names = parse_names(card);
-            manaCost = parse_manaCost(card);
-            colors = parse_colors(card);
-            supertypes = parse_supertypes(card);
-            types = parse_types(card);
-            subtypes = parse_subtypes(card);
+        Card(const card_t & card, Database * dat) :
+        db(dat),
+        name(set_name(card)),
+        text(set_text(card)),
+        power(set_power(card)),
+        toughness(set_toughness(card)),
+        loyalty(set_loyalty(card)),
+        hand(set_hand(card)),
+        life(set_life(card)),
+        layout(parse_layout(card)),
+        names(parse_names(card)),
+        manaCost(parse_manaCost(card)),
+        colors(parse_colors(card)),
+        supertypes(parse_supertypes(card)),
+        types(parse_types(card)),
+        subtypes(parse_subtypes(card)) {
         }
 
         layout_t get_layout() const;
@@ -138,6 +148,86 @@ namespace magicSearchEngine {
 
         subtypes_t
         parse_subtypes(const card_t & card);
+
+        std::string
+        get_mana_symbol(std::string & s);
+
+        name_t
+        set_name(const card_t & card) {
+            name_t x;
+            if (card.find("name") != card.end()) {
+                x = card["name"];
+                return x;
+            }
+            else
+                return "";
+        }
+
+        text_t
+        set_text(const card_t & card) {
+            text_t x;
+            if (card.find("text") != card.end()) {
+                x = card["text"];
+                return x;
+            }
+            else
+                return "";
+        }
+
+        power_t
+        set_power(const card_t & card) {
+            power_t x;
+            if (card.find("power") != card.end()) {
+                x = card["power"];
+                return x;
+            }
+            else
+                return INT_MIN;
+        }
+
+        toughness_t
+        set_toughness(const card_t & card) {
+            toughness_t x;
+            if (card.find("toughness") != card.end()) {
+                x = card["toughness"];
+                return x;
+            }
+            else
+                return INT_MIN;
+        }
+
+        loyalty_t
+        set_loyalty(const card_t & card) {
+            loyalty_t x;
+            if (card.find("loyalty") != card.end()) {
+                x = card["loyalty"];
+                return x;
+            }
+            else
+                return INT_MIN;
+        }
+
+        hand_t
+        set_hand(const card_t & card) {
+            hand_t x;
+            if (card.find("hand") != card.end()) {
+                x = card["hand"];
+                return x;
+            }
+            else
+                return INT_MIN;
+        }
+
+        life_t
+        set_life(const card_t & card) {
+            life_t x;
+            if (card.find("life") != card.end()) {
+                x = card["life"];
+                return x;
+            }
+            else
+                return INT_MIN;
+        }
     };
 }
 #endif /* CARD_HPP */

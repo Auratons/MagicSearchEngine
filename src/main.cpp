@@ -1,9 +1,8 @@
-#include <stdlib.h>
-#include <iostream>
+#include "database.hpp"
 
 int
 main(int argc, char *argv[])
 {
-	std::cout << "Hello world!" << std::endl;
-	return EXIT_SUCCESS;
+    magicSearchEngine::JSONDatabase database;
+    database.load_database();
 }

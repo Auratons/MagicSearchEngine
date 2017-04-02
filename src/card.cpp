@@ -35,10 +35,10 @@ namespace magicSearchEngine {
      */
     layout_t
     Card::parse_layout(const card_t & card) {
-        auto && layouts = db->get_layout();
+        const auto & layouts = db->get_layout();
         try {
             if (card.find("layout") != card.end())
-                return &(layouts.at(card["layout"]));
+                return const_cast<layout_t>(&(layouts.at(card["layout"])));
         } catch (const std::out_of_range &) {
             std::string msg = "Layout of " + name +
                     " does not refer to any layout in the database, check rules.";
@@ -51,20 +51,61 @@ namespace magicSearchEngine {
     Card::parse_names(const card_t & card) {
         std::vector<std::string> names;
         if (card.find("names") != card.end()) {
-            for (auto && name : card["names"])
+            for (const auto & name : card["names"])
                 names.push_back(name);
         }
         return std::move(names);
     }
 
+    /*
+     * This method expects that all mana types of one kind are in row for a card.
+     */
     manaCost_t
     Card::parse_manaCost(const card_t & card) {
-        throw std::exception();
+        const auto & db_mana = db->get_mana();
+        manaCost_t cards_cost;
+        try {
+            if (card.find("manaCost") != card.end()) {
+                std::string manaCost = card["manaCost"];
+                const std::string & str = get_mana_symbol(manaCost);
+                while (str.size() != 0) {
+                    const auto & mana_s = const_cast<const std::map<std::string, std::string> &>(db_mana[str];
+                    if (cards_cost.size() == 0 || *(cards_cost[cards_cost.size() - 1].color) != mana_s) {
+                        cards_cost.emplace_back(mana_s, 1);
+                    } else
+                        cards_cost[cards_cost.size() - 1].count++;
+                    str = get_mana_symbol(manaCost);
+                }
+
+            }
+        } catch (const std::out_of_range &) {
+            std::string msg = "One of mana symbols of " + name +
+                    " does not refer to any mana symbol in the database, check rules.";
+            throw std::out_of_range(msg);
+        }
+        return std::move(cards_cost);
+    }
+
+    /*
+     * This method does not check validity of mana string from db.
+     */
+    const std::string
+    Card::get_mana_symbol(std::string & s) {
+        std::string mana;
+        if (s.size() != 0) {
+            size_t i = 1;
+            while (s[i] != '}') {
+                mana.append(&s[i]);
+                ++i;
+            }
+            s.erase(0, i + 1);
+        }
+        return std::move(mana);
     }
 
     colors_t
     Card::parse_colors(const card_t & card) {
-        auto && db_colors = db->get_colors();
+        const auto & db_colors = db->get_colors();
         colors_t card_colors;
         try {
             if (card.find("colors") != card.end()) {
@@ -81,7 +122,7 @@ namespace magicSearchEngine {
 
     supertypes_t
     Card::parse_supertypes(const card_t & card) {
-        auto && db_supertypes = db->get_supertypes();
+        const auto & db_supertypes = db->get_supertypes();
         supertypes_t card_supertypes;
         try {
             if (card.find("supertypes") != card.end()) {
@@ -98,7 +139,7 @@ namespace magicSearchEngine {
 
     types_t
     Card::parse_types(const card_t & card) {
-        auto && db_types = db->get_types();
+        const auto & db_types = db->get_types();
         types_t card_types;
         try {
             if (card.find("types") != card.end()) {
@@ -115,7 +156,7 @@ namespace magicSearchEngine {
 
     subtypes_t
     Card::parse_subtypes(const card_t & card) {
-        auto && db_subtypes = db->get_subtypes();
+        const auto & db_subtypes = db->get_subtypes();
         subtypes_t card_subtypes;
         try {
             if (card.find("subtypes") != card.end()) {

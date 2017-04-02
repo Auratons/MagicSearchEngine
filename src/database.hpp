@@ -50,25 +50,25 @@ namespace magicSearchEngine {
         virtual void
         load_database() = 0;
 
-        virtual std::vector<Card>
+        virtual const std::vector<Card> &
         get_cards() const = 0;
 
-        virtual std::map<std::string, std::string>
+        virtual const std::map<std::string, std::string> &
         get_types() const = 0;
 
-        virtual std::map<std::string, std::string>
+        virtual const std::map<std::string, std::string> &
         get_subtypes() const = 0;
 
-        virtual std::map<std::string, std::string>
+        virtual const std::map<std::string, std::string> &
         get_supertypes() const = 0;
 
-        virtual std::map<std::string, std::string>
+        virtual const std::map<std::string, std::string> &
         get_layout() const = 0;
 
-        virtual std::map<std::string, std::string>
+        virtual const std::map<std::string, std::string> &
         get_colors() const = 0;
 
-        virtual std::map<std::string, std::string>
+        virtual const std::map<std::string, std::string> &
         get_mana() const = 0;
 
         virtual ~Database() {
@@ -102,25 +102,25 @@ namespace magicSearchEngine {
         void
         load_database() override;
 
-        std::vector<Card>
+        const std::vector<Card> &
         get_cards() const override;
 
-        std::map<std::string, std::string>
+        const std::map<std::string, std::string> &
         get_types() const override;
 
-        std::map<std::string, std::string>
+        const std::map<std::string, std::string> &
         get_subtypes() const override;
 
-        std::map<std::string, std::string>
+        const std::map<std::string, std::string> &
         get_supertypes() const override;
 
-        std::map<std::string, std::string>
+        const std::map<std::string, std::string> &
         get_layout() const override;
 
-        std::map<std::string, std::string>
+        const std::map<std::string, std::string> &
         get_colors() const override;
 
-        std::map<std::string, std::string>
+        const std::map<std::string, std::string> &
         get_mana() const override;
 
         ~JSONDatabase() {
