@@ -73,7 +73,7 @@ namespace magicSearchEngine {
 
     class Card {
     private:
-        Database * db;
+        const Database * db;
         const layout_t layout;
         const name_t name;
         const names_t names;
@@ -94,7 +94,7 @@ namespace magicSearchEngine {
 //        // I decided for a macro. #sorryjako
 //#define SET(attr, fail) if (card.find("attr") != card.end()) attr = card["attr"]; else attr = fail
 
-        Card(const card_t & card, Database * dat) :
+        Card(const card_t & card, const Database * dat) :
         db(dat),
         name(set_name(card)),
         text(set_text(card)),

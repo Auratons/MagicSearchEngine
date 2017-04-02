@@ -66,14 +66,15 @@ namespace magicSearchEngine {
         manaCost_t cards_cost;
         try {
             if (card.find("manaCost") != card.end()) {
-                std::string manaCost = card["manaCost"];
-                const std::string & str = get_mana_symbol(manaCost);
-                while (str.size() != 0) {
-                    const auto & mana_s = const_cast<const std::map<std::string, std::string> &>(db_mana[str];
+                std::string manaCost = card.at("manaCost");
+                std::string str = get_mana_symbol(manaCost);
+                while (manaCost.size() != 0) {
+                    const auto & mana_s = db_mana.at(str);
                     if (cards_cost.size() == 0 || *(cards_cost[cards_cost.size() - 1].color) != mana_s) {
                         cards_cost.emplace_back(mana_s, 1);
-                    } else
+                    } else {
                         cards_cost[cards_cost.size() - 1].count++;
+                    }
                     str = get_mana_symbol(manaCost);
                 }
 
@@ -88,8 +89,9 @@ namespace magicSearchEngine {
 
     /*
      * This method does not check validity of mana string from db.
+     * FIXME: Do you really change the parameter s?
      */
-    const std::string
+    std::string
     Card::get_mana_symbol(std::string & s) {
         std::string mana;
         if (s.size() != 0) {
@@ -109,8 +111,9 @@ namespace magicSearchEngine {
         colors_t card_colors;
         try {
             if (card.find("colors") != card.end()) {
-                for (auto && color : card["colors"])
+                for (auto && color : card["colors"]) {
                     card_colors.push_back(&(db_colors.at(color)));
+                }
             }
         } catch (const std::out_of_range &) {
             std::string msg = "One of colors of " + name +
