@@ -25,6 +25,8 @@
 #include <exception>
 #include <string>
 #include <vector>
+#include <stdexcept>
+#include <algorithm>
 #include "src/card.hpp"
 #include "src/database.hpp"
 
@@ -33,26 +35,29 @@ namespace magicSearchEngine {
     /*
      * Some of these can be traits-templated, maybe in the future.
      */
-    layout_t
+    const layout_t
     Card::parse_layout(const card_t & card) {
         const auto & layouts = db->get_layout();
         try {
-            if (card.find("layout") != card.end())
-                return const_cast<layout_t>(&(layouts.at(card["layout"])));
-        } catch (const std::out_of_range &) {
+            if (card.find("layout") != card.end()) {
+                return const_cast<layout_t> (layouts.at(card["layout"]));
+            }
+        }
+        catch (const std::out_of_range &) {
             std::string msg = "Layout of " + name +
                     " does not refer to any layout in the database, check rules.";
             throw std::out_of_range(msg);
         }
-        return nullptr;
+        return const_cast<layout_t> (layouts.at(""));
     }
 
-    names_t
+    const names_t
     Card::parse_names(const card_t & card) {
         std::vector<std::string> names;
         if (card.find("names") != card.end()) {
-            for (const auto & name : card["names"])
-                names.push_back(name);
+            for (std::string name_ : card["names"]) {
+                names.push_back(name_);
+            }
         }
         return std::move(names);
     }
@@ -60,7 +65,7 @@ namespace magicSearchEngine {
     /*
      * This method expects that all mana types of one kind are in row for a card.
      */
-    manaCost_t
+    const manaCost_t
     Card::parse_manaCost(const card_t & card) {
         const auto & db_mana = db->get_mana();
         manaCost_t cards_cost;
@@ -68,18 +73,20 @@ namespace magicSearchEngine {
             if (card.find("manaCost") != card.end()) {
                 std::string manaCost = card.at("manaCost");
                 std::string str = get_mana_symbol(manaCost);
-                while (manaCost.size() != 0) {
+                while (str.size() != 0) {
                     const auto & mana_s = db_mana.at(str);
                     if (cards_cost.size() == 0 || *(cards_cost[cards_cost.size() - 1].color) != mana_s) {
-                        cards_cost.emplace_back(mana_s, 1);
-                    } else {
+                        cards_cost.push_back(manaCnt(&mana_s, 1));
+                    }
+                    else {
                         cards_cost[cards_cost.size() - 1].count++;
                     }
                     str = get_mana_symbol(manaCost);
                 }
 
             }
-        } catch (const std::out_of_range &) {
+        }
+        catch (const std::out_of_range &) {
             std::string msg = "One of mana symbols of " + name +
                     " does not refer to any mana symbol in the database, check rules.";
             throw std::out_of_range(msg);
@@ -97,7 +104,7 @@ namespace magicSearchEngine {
         if (s.size() != 0) {
             size_t i = 1;
             while (s[i] != '}') {
-                mana.append(&s[i]);
+                mana.append(1, s[i]);
                 ++i;
             }
             s.erase(0, i + 1);
@@ -105,17 +112,18 @@ namespace magicSearchEngine {
         return std::move(mana);
     }
 
-    colors_t
+    const colors_t
     Card::parse_colors(const card_t & card) {
         const auto & db_colors = db->get_colors();
         colors_t card_colors;
         try {
             if (card.find("colors") != card.end()) {
-                for (auto && color : card["colors"]) {
+                for (const std::string & color : card["colors"]) {
                     card_colors.push_back(&(db_colors.at(color)));
                 }
             }
-        } catch (const std::out_of_range &) {
+        }
+        catch (const std::out_of_range &) {
             std::string msg = "One of colors of " + name +
                     " does not refer to any color in the database, check rules.";
             throw std::out_of_range(msg);
@@ -123,16 +131,18 @@ namespace magicSearchEngine {
         return std::move(card_colors);
     }
 
-    supertypes_t
+    const supertypes_t
     Card::parse_supertypes(const card_t & card) {
         const auto & db_supertypes = db->get_supertypes();
         supertypes_t card_supertypes;
         try {
             if (card.find("supertypes") != card.end()) {
-                for (auto && supertype : card["supertypes"])
+                for (const std::string & supertype : card["supertypes"]) {
                     card_supertypes.push_back(&(db_supertypes.at(supertype)));
+                }
             }
-        } catch (const std::out_of_range &) {
+        }
+        catch (const std::out_of_range &) {
             std::string msg = "One of supertypes of " + name +
                     " does not refer to any supertype in the database, check rules.";
             throw std::out_of_range(msg);
@@ -140,16 +150,18 @@ namespace magicSearchEngine {
         return std::move(card_supertypes);
     }
 
-    types_t
+    const types_t
     Card::parse_types(const card_t & card) {
         const auto & db_types = db->get_types();
         types_t card_types;
         try {
             if (card.find("types") != card.end()) {
-                for (auto && type : card["types"])
+                for (const std::string & type : card["types"]) {
                     card_types.push_back(&(db_types.at(type)));
+                }
             }
-        } catch (const std::out_of_range &) {
+        }
+        catch (const std::out_of_range &) {
             std::string msg = "One of types of " + name +
                     " does not refer to any type in the database, check rules.";
             throw std::out_of_range(msg);
@@ -157,16 +169,18 @@ namespace magicSearchEngine {
         return std::move(card_types);
     }
 
-    subtypes_t
+    const subtypes_t
     Card::parse_subtypes(const card_t & card) {
         const auto & db_subtypes = db->get_subtypes();
         subtypes_t card_subtypes;
         try {
             if (card.find("subtypes") != card.end()) {
-                for (auto && subtype : card["subtypes"])
+                for (const std::string & subtype : card["subtypes"]) {
                     card_subtypes.push_back(&(db_subtypes.at(subtype)));
+                }
             }
-        } catch (const std::out_of_range &) {
+        }
+        catch (const std::out_of_range &) {
             std::string msg = "One of subtypes of " + name +
                     " does not refer to any subtype in the database, check rules.";
             throw std::out_of_range(msg);
@@ -178,72 +192,72 @@ namespace magicSearchEngine {
      * Only getters follows.
      */
 
-    layout_t
+    const layout_t &
     Card::get_layout() const {
         return layout;
     }
 
-    name_t
+    const name_t &
     Card::get_name() const {
         return name;
     }
 
-    names_t
+    const names_t &
     Card::get_names() const {
         return names;
     }
 
-    manaCost_t
+    const manaCost_t &
     Card::get_manaCost() const {
         return manaCost;
     }
 
-    colors_t
+    const colors_t &
     Card::get_colors() const {
         return colors;
     }
 
-    supertypes_t
+    const supertypes_t &
     Card::get_supertypes() const {
         return supertypes;
     }
 
-    types_t
+    const types_t &
     Card::get_types() const {
         return types;
     }
 
-    subtypes_t
+    const subtypes_t &
     Card::get_subtypes() const {
         return subtypes;
     }
 
-    text_t
+    const text_t &
     Card::get_text() const {
         return text;
     }
 
-    power_t
-    Card::get_power() const {
-        return power;
-    }
+    //    const power_t &
+    //    Card::get_power() const {
+    //        return power;
+    //    }
+    //
+    //    const toughness_t &
+    //    Card::get_toughness() const {
+    //        return toughness;
+    //    }
 
-    toughness_t
-    Card::get_toughness() const {
-        return toughness;
-    }
-
-    loyalty_t
+    const loyalty_t &
     Card::get_loyalty() const {
         return loyalty;
     }
 
-    hand_t
+    const hand_t &
     Card::get_hand() const {
         return hand;
     }
 
-    life_t
+    const life_t &
     Card::get_life() const {
         return life;
     }

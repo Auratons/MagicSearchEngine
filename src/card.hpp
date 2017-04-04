@@ -44,18 +44,18 @@ namespace magicSearchEngine {
         const std::string * color;
         short count;
 
-        manaCnt(std::string * c, short cnt) : color(c), count(cnt) {
+        manaCnt(const std::string * c, short cnt) : color(c), count(cnt) {
         }
     };
 
-    using layout_t = std::string *;
+    using layout_t = std::string &;
     using name_t = std::string;
     using names_t = std::vector<std::string>;
     using manaCost_t = std::vector<manaCnt>;
-    using colors_t = std::vector<std::string *>;
-    using supertypes_t = std::vector<std::string *>;
-    using types_t = std::vector<std::string *>;
-    using subtypes_t = std::vector<std::string *>;
+    using colors_t = std::vector<const std::string *>;
+    using supertypes_t = std::vector<const std::string *>;
+    using types_t = std::vector<const std::string *>;
+    using subtypes_t = std::vector<const std::string *>;
     using text_t = std::string;
     using power_t = int;
     using toughness_t = int;
@@ -83,8 +83,8 @@ namespace magicSearchEngine {
         const types_t types;
         const subtypes_t subtypes;
         const text_t text;
-        const power_t power;
-        const toughness_t toughness;
+//        const power_t power;
+//        const toughness_t toughness;
         const loyalty_t loyalty;
         const hand_t hand;
         const life_t life;
@@ -98,8 +98,8 @@ namespace magicSearchEngine {
         db(dat),
         name(set_name(card)),
         text(set_text(card)),
-        power(set_power(card)),
-        toughness(set_toughness(card)),
+//        power(set_power(card)),
+//        toughness(set_toughness(card)),
         loyalty(set_loyalty(card)),
         hand(set_hand(card)),
         life(set_life(card)),
@@ -109,50 +109,51 @@ namespace magicSearchEngine {
         colors(parse_colors(card)),
         supertypes(parse_supertypes(card)),
         types(parse_types(card)),
-        subtypes(parse_subtypes(card)) {
+        subtypes(parse_subtypes(card)) 
+        {
         }
 
-        layout_t get_layout() const;
-        name_t get_name() const;
-        names_t get_names() const;
-        manaCost_t get_manaCost() const;
-        colors_t get_colors() const;
-        supertypes_t get_supertypes() const;
-        types_t get_types() const;
-        subtypes_t get_subtypes() const;
-        text_t get_text() const;
-        power_t get_power() const;
-        toughness_t get_toughness() const;
-        loyalty_t get_loyalty() const;
-        hand_t get_hand() const;
-        life_t get_life() const;
+        const layout_t & get_layout() const;
+        const name_t & get_name() const;
+        const names_t & get_names() const;
+        const manaCost_t & get_manaCost() const;
+        const colors_t & get_colors() const;
+        const supertypes_t & get_supertypes() const;
+        const types_t & get_types() const;
+        const subtypes_t & get_subtypes() const;
+        const text_t & get_text() const;
+//        const power_t & get_power() const;
+//        const toughness_t & get_toughness() const;
+        const loyalty_t & get_loyalty() const;
+        const hand_t & get_hand() const;
+        const life_t & get_life() const;
 
     private:
-        layout_t
+        const layout_t
         parse_layout(const card_t & card);
 
-        names_t
+        const names_t
         parse_names(const card_t & card);
 
-        manaCost_t
+        const manaCost_t
         parse_manaCost(const card_t & card);
 
-        colors_t
+        const colors_t
         parse_colors(const card_t & card);
 
-        supertypes_t
+        const supertypes_t
         parse_supertypes(const card_t & card);
 
-        types_t
+        const types_t
         parse_types(const card_t & card);
 
-        subtypes_t
+        const subtypes_t
         parse_subtypes(const card_t & card);
 
         std::string
         get_mana_symbol(std::string & s);
 
-        name_t
+        const name_t
         set_name(const card_t & card) {
             name_t x;
             if (card.find("name") != card.end()) {
@@ -163,7 +164,7 @@ namespace magicSearchEngine {
                 return "";
         }
 
-        text_t
+        const text_t
         set_text(const card_t & card) {
             text_t x;
             if (card.find("text") != card.end()) {
@@ -174,7 +175,8 @@ namespace magicSearchEngine {
                 return "";
         }
 
-        power_t
+        // TODO an asterix can e included
+        const power_t
         set_power(const card_t & card) {
             power_t x;
             if (card.find("power") != card.end()) {
@@ -185,7 +187,8 @@ namespace magicSearchEngine {
                 return INT_MIN;
         }
 
-        toughness_t
+        // TODO an asterix can e included
+        const toughness_t
         set_toughness(const card_t & card) {
             toughness_t x;
             if (card.find("toughness") != card.end()) {
@@ -196,7 +199,7 @@ namespace magicSearchEngine {
                 return INT_MIN;
         }
 
-        loyalty_t
+        const loyalty_t
         set_loyalty(const card_t & card) {
             loyalty_t x;
             if (card.find("loyalty") != card.end()) {
@@ -207,7 +210,7 @@ namespace magicSearchEngine {
                 return INT_MIN;
         }
 
-        hand_t
+        const hand_t
         set_hand(const card_t & card) {
             hand_t x;
             if (card.find("hand") != card.end()) {
@@ -218,7 +221,7 @@ namespace magicSearchEngine {
                 return INT_MIN;
         }
 
-        life_t
+        const life_t
         set_life(const card_t & card) {
             life_t x;
             if (card.find("life") != card.end()) {

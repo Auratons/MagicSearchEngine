@@ -46,7 +46,7 @@ namespace magicSearchEngine {
      * of database.
      */
     class Database {
-    public:        
+    public:
         virtual void
         load_database() = 0;
 
@@ -78,8 +78,8 @@ namespace magicSearchEngine {
     class JSONDatabase : public Database {
     private:
         /* 
-         * Question: Shall be used boolean indicator of already loaded
-         * database or some magic with a static member? The first solution
+         * Question: Shall a boolean indicator of already loaded
+         * database be used or some magic with a static member? The first solution
          * needs if in each getter function which could have small-to-medium
          * performance decrease (frequent use of getters), but the 
          * second means allocating ~400 strings within construction of 
@@ -144,11 +144,12 @@ namespace magicSearchEngine {
         }
 
         virtual const char*
-        what() const throw() {
+        what() const throw () {
             return msg.c_str();
         }
-        
-        ~bad_optional_access() throw() {}
+
+        ~bad_optional_access() throw () {
+        }
     };
 }
 
