@@ -36,6 +36,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <unordered_map>
 #include "src/card.hpp"
 #include "src/json.hpp"
 
@@ -53,22 +54,22 @@ namespace magicSearchEngine {
         virtual const std::vector<Card> &
         get_cards() const = 0;
 
-        virtual const std::map<std::string, std::string> &
+        virtual const std::unordered_map<std::string, std::string> &
         get_types() const = 0;
 
-        virtual const std::map<std::string, std::string> &
+        virtual const std::unordered_map<std::string, std::string> &
         get_subtypes() const = 0;
 
-        virtual const std::map<std::string, std::string> &
+        virtual const std::unordered_map<std::string, std::string> &
         get_supertypes() const = 0;
 
-        virtual const std::map<std::string, std::string> &
+        virtual const std::unordered_map<std::string, std::string> &
         get_layout() const = 0;
 
-        virtual const std::map<std::string, std::string> &
+        virtual const std::unordered_map<std::string, std::string> &
         get_colors() const = 0;
 
-        virtual const std::map<std::string, std::string> &
+        virtual const std::unordered_map<std::string, std::string> &
         get_mana() const = 0;
 
         virtual ~Database() {
@@ -91,12 +92,12 @@ namespace magicSearchEngine {
                 "Database access before it was loaded. Firstly, call JSONDatabase::load_database().";
 
         std::vector<Card> cards;
-        std::map<std::string, std::string> types;
-        std::map<std::string, std::string> subtypes;
-        std::map<std::string, std::string> supertypes;
-        std::map<std::string, std::string> layout;
-        std::map<std::string, std::string> colors;
-        std::map<std::string, std::string> mana;
+        std::unordered_map<std::string, std::string> types;
+        std::unordered_map<std::string, std::string> subtypes;
+        std::unordered_map<std::string, std::string> supertypes;
+        std::unordered_map<std::string, std::string> layout;
+        std::unordered_map<std::string, std::string> colors;
+        std::unordered_map<std::string, std::string> mana;
 
     public:
         void
@@ -105,22 +106,22 @@ namespace magicSearchEngine {
         const std::vector<Card> &
         get_cards() const override;
 
-        const std::map<std::string, std::string> &
+        const std::unordered_map<std::string, std::string> &
         get_types() const override;
 
-        const std::map<std::string, std::string> &
+        const std::unordered_map<std::string, std::string> &
         get_subtypes() const override;
 
-        const std::map<std::string, std::string> &
+        const std::unordered_map<std::string, std::string> &
         get_supertypes() const override;
 
-        const std::map<std::string, std::string> &
+        const std::unordered_map<std::string, std::string> &
         get_layout() const override;
 
-        const std::map<std::string, std::string> &
+        const std::unordered_map<std::string, std::string> &
         get_colors() const override;
 
-        const std::map<std::string, std::string> &
+        const std::unordered_map<std::string, std::string> &
         get_mana() const override;
 
         ~JSONDatabase() {

@@ -27,6 +27,7 @@
 #include <string>
 #include <vector>
 #include <exception>
+#include <unordered_map>
 #include "src/database.hpp"
 #include "src/card.hpp"
 #include "src/json.hpp"
@@ -549,7 +550,7 @@ namespace magicSearchEngine {
         return std::move(cards);
     }
 
-    const std::map<std::string, std::string> &
+    const std::unordered_map<std::string, std::string> &
     JSONDatabase::get_types() const {
         if (was_db_loaded)
             return types;
@@ -557,7 +558,7 @@ namespace magicSearchEngine {
             throw bad_optional_access(db_not_loaded);
     }
 
-    const std::map<std::string, std::string> &
+    const std::unordered_map<std::string, std::string> &
     JSONDatabase::get_subtypes() const {
         if (was_db_loaded)
             return subtypes;
@@ -565,7 +566,7 @@ namespace magicSearchEngine {
             throw bad_optional_access(db_not_loaded);
     }
 
-    const std::map<std::string, std::string> &
+    const std::unordered_map<std::string, std::string> &
     JSONDatabase::get_supertypes() const {
         if (was_db_loaded)
             return supertypes;
@@ -581,7 +582,7 @@ namespace magicSearchEngine {
             throw bad_optional_access(db_not_loaded);
     }
 
-    const std::map<std::string, std::string> &
+    const std::unordered_map<std::string, std::string> &
     JSONDatabase::get_layout() const {
         if (was_db_loaded)
             return layout;
@@ -589,7 +590,7 @@ namespace magicSearchEngine {
             throw bad_optional_access(db_not_loaded);
     }
 
-    const std::map<std::string, std::string> &
+    const std::unordered_map<std::string, std::string> &
     JSONDatabase::get_colors() const {
         if (was_db_loaded)
             return colors;
@@ -597,7 +598,7 @@ namespace magicSearchEngine {
             throw bad_optional_access(db_not_loaded);
     }
 
-    const std::map<std::string, std::string> &
+    const std::unordered_map<std::string, std::string> &
     JSONDatabase::get_mana() const {
         if (was_db_loaded)
             return mana;
