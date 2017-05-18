@@ -29,7 +29,11 @@ main(int argc, char *argv[])
                 this_thread::yield();
                 break;
             case cmd::find:
-                cout << oraculum.search_for(command.second[1]) << endl;
+                auto res = oraculum.search_for(command.second[1]);
+                if (res == nullptr)
+                    cout << "Demanded card was not found" << endl;
+                else
+                    cout << *(res) << endl;
                 break;
         }
     }
