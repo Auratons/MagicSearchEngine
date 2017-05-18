@@ -26,14 +26,13 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <sstream>
 #include "ui.hpp"
 
 using namespace std;
 
 namespace magicSearchEngine {
 
-    std::pair<cmd, vector<string>> 
+    std::pair<cmd, vector<string>>
     console::get_cmd() {
         string input;
         vector<string> opts;
@@ -45,6 +44,8 @@ namespace magicSearchEngine {
         if (input == "exit" || input == "quit" || input == "q")
             return make_pair(cmd::exit, opts);
         opts = parse_line(input);
+        if (opts.size() == 0)
+            return make_pair(cmd::parse_error, opts);
         if (opts[0] == "find")
             return make_pair(cmd::find, opts);
 
@@ -53,18 +54,48 @@ namespace magicSearchEngine {
 
     vector<string>
     console::parse_line(const string & line) {
-        auto stream = stringstream(line);
-        string op;
-        size_t l = 0;
-        vector<string> res;
-        stream >> op; // Jump over the command itself.
-        res.push_back(op);
-        l += op.size();
-        while (l != line.size()) {
-            stream >> op;
-            res.push_back(op);
-            l = l + op.size() + 1; // +1 for space
+        vector<string> tokens;
+        size_t line_length = line.length();
+        bool double_quote = false;
+        bool simple_quote = false;
+        int token_length;
+        for (int i = 0; i < line_length; i++) {
+            int start = i;
+            if (line[i] == '\"') {
+                double_quote = true;
+            }
+            else if (line[i] == '\'') simple_quote = true;
+
+            if (double_quote) {
+                i++;
+                start++;
+                while (i < line_length && line[i] != '\"')
+                    i++;
+                if (i < line_length)
+                    double_quote = false;
+                token_length = i - start;
+                i++;
+            }
+            else if (simple_quote) {
+                i++;
+                while (i < line_length && line[i] != '\'')
+                    i++;
+                if (i < line_length)
+                    simple_quote = false;
+                token_length = i - start;
+                i++;
+            }
+            else {
+                while (i < line_length && line[i] != ' ')
+                    i++;
+                token_length = i - start;
+            }
+            tokens.push_back(line.substr(start, token_length));
         }
-        return std::move(res);
+        if (double_quote || simple_quote) {
+            cout << "One of the quotes is open." << endl;
+            return vector<string>();
+        }        
+        return move(tokens);
     }
 }

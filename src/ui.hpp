@@ -44,6 +44,7 @@ namespace magicSearchEngine {
         none,
         exit,
         error,
+        parse_error,
         find,
         similar
     } ;
