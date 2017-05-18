@@ -27,8 +27,11 @@
 #include <vector>
 #include <stdexcept>
 #include <algorithm>
+#include <limits.h>
 #include "src/card.hpp"
 #include "src/database.hpp"
+
+using namespace std;
 
 namespace magicSearchEngine {
 
@@ -47,6 +50,56 @@ namespace magicSearchEngine {
         set_supertypes(card);
         set_types(card);
         set_subtypes(card);
+    }
+
+    template<typename T, typename Function>
+    inline void
+    print_vec(std::ostream & os, const T & to_print, const string & name, Function && f) {
+        if (to_print.size() != 0) {
+            os << name;
+            for (auto && m : to_print) {
+                os << f(m) << " ";
+            }
+            os << endl;
+        }
+    }
+
+    std::ostream & operator<<(std::ostream & os, const Card & card) {
+        os << "Name: " << card.get_name() << endl;
+
+        print_vec(os, card.get_names(), "Names: ", [](auto && x) {
+            return x; });
+
+        if (card.get_layout() != "")
+            os << "Layout: " << card.get_layout() << endl;
+
+        print_vec(os, card.get_manaCost(), "Mana cost: ", [](auto && x) {
+            return x; });
+        print_vec(os, card.get_colors(), "Colors: ", [](auto && x) {
+            return *x; });
+        print_vec(os, card.get_types(), "Types: ", [](auto && x) {
+            return *x; });
+        print_vec(os, card.get_subtypes(), "Subtypes: ", [](auto && x) {
+            return *x; });
+        print_vec(os, card.get_supertypes(), "SuperTypes: ", [](auto && x) {
+            return *x; });
+
+        const feature & f = card.get_power();
+        if (!f.asterics && !f.half && f.whole_part != INT_MIN)
+            os << "Power: " << card.get_power() << endl;
+        const feature & ff = card.get_toughness();
+        if (!ff.asterics && !ff.half && ff.whole_part != INT_MIN)
+            os << "Toughness: " << card.get_toughness() << endl;
+        
+        if (card.get_hand() != INT_MIN)
+            os << "Hand: " << card.get_hand();
+        if (card.get_loyalty() != INT_MIN)
+            os << "Loyalty: " << card.get_hand();
+        if (card.get_life() != INT_MIN)
+            os << "Life: " << card.get_hand();
+
+        if (card.get_text() != "")
+            os << "Text: " << card.get_text() << endl;
     }
 
     void
@@ -84,7 +137,7 @@ namespace magicSearchEngine {
             if (pow == ".5") goto final_set;
             ftr.whole_part = std::stoi(pow);
         }
-        final_set:
+    final_set:
         power = ftr;
     }
 
@@ -99,7 +152,7 @@ namespace magicSearchEngine {
             if (tou == ".5") goto final_set;
             ftr.whole_part = std::stoi(tou);
         }
-        final_set:
+    final_set:
         toughness = ftr;
     }
 
@@ -174,10 +227,10 @@ namespace magicSearchEngine {
         try {
             if (card.find("manaCost") != card.end()) {
                 std::string manaCost = card.at("manaCost");
-                std::string str = get_mana_symbol(manaCost);
+                string str = get_mana_symbol(manaCost);
                 while (str.size() != 0) {
-                    const auto & mana_s = db_mana.at(str);
-                    if (cards_cost.size() == 0 || *(cards_cost[cards_cost.size() - 1].color) != mana_s) {
+                    const string & mana_s = db_mana.at(str);
+                    if (cards_cost.size() == 0 || strcmp((*(cards_cost[cards_cost.size() - 1].color)).c_str(), mana_s.c_str()) != 0) {// *(cards_cost[cards_cost.size() - 1].color) != mana_s) {
                         cards_cost.push_back(manaCnt(&mana_s, 1));
                     }
                     else {
@@ -193,6 +246,24 @@ namespace magicSearchEngine {
             throw std::out_of_range(msg);
         }
         manaCost = std::move(cards_cost);
+    }
+
+    /*
+     * This method does not check validity of mana string from db.
+     * FIXME: Do you really change the parameter s?
+     */
+    std::string
+    Card::get_mana_symbol(std::string & s) {
+        std::string mana;
+        if (s.size() != 0) {
+            size_t i = 1;
+            while (s[i] != '}') {
+                mana.append(1, s[i]);
+                ++i;
+            }
+            s.erase(0, i + 1);
+        }
+        return std::move(mana);
     }
 
     void
@@ -269,24 +340,6 @@ namespace magicSearchEngine {
             throw std::out_of_range(msg);
         }
         subtypes = std::move(card_subtypes);
-    }
-
-    /*
-     * This method does not check validity of mana string from db.
-     * FIXME: Do you really change the parameter s?
-     */
-    std::string
-    Card::get_mana_symbol(std::string & s) {
-        std::string mana;
-        if (s.size() != 0) {
-            size_t i = 1;
-            while (s[i] != '}') {
-                mana.append(1, s[i]);
-                ++i;
-            }
-            s.erase(0, i + 1);
-        }
-        return std::move(mana);
     }
 
     /*

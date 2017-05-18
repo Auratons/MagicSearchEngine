@@ -46,7 +46,13 @@ namespace magicSearchEngine {
 
         manaCnt(const std::string * c, short cnt) : color(c), count(cnt) {
         }
+
+        friend std::ostream & operator<<(std::ostream & os, const manaCnt & m);
     } ;
+
+    inline std::ostream & operator<<(std::ostream & os, const manaCnt & m) {
+        os << *(m.color) << ": " << m.count;
+    }
 
     struct feature {
         int whole_part;
@@ -58,7 +64,20 @@ namespace magicSearchEngine {
 
         feature(int wp, bool hf, bool as) : whole_part(wp), half(hf), asterics(as) {
         }
+
+        friend std::ostream & operator<<(std::ostream & os, const feature & f);
     } ;
+
+    inline std::ostream & operator<<(std::ostream & os, const feature & f) {
+        if (f.whole_part != INT_MIN)
+            os << f.whole_part;
+        if (f.half)
+            os << ".5";
+        if (f.whole_part != INT_MIN && f.asterics)
+            os << "+*";
+        if (f.asterics)
+            os << "*";
+    }
 
     using layout_t     = std::string;                       // Default: ""
     using name_t       = std::string;                       // Default: ""
@@ -102,6 +121,7 @@ namespace magicSearchEngine {
 
     public:
         Card(const card_t & card, const Database * dat);
+        friend std::ostream & operator<<(std::ostream &, const Card &) ;
         /*
          * Getters.
          */
