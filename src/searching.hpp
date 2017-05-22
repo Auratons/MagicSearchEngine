@@ -32,6 +32,7 @@
 #ifndef SEARCHING_HPP
 #define SEARCHING_HPP
 
+#include <set>
 #include "database.hpp"
 #include "card.hpp"
 
@@ -40,14 +41,21 @@ namespace magicSearchEngine {
     class search_engine {
     private:
         const Database & db;
+        std::vector<std::set<std::string> > index;
+        std::vector<std::string> stop_words;
 
     public:
         search_engine(const Database & db_) : db(db_) {
         }
         
+        void
+        create_index(const std::vector<Card> &);
+        
         const Card *
         search_for(const std::string &);
 
+        const Card *
+        find_similar(const std::string &, size_t cnt);
     } ;
 }
 
