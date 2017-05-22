@@ -52,26 +52,35 @@ namespace magicSearchEngine {
     class user_interface {
     public:
         virtual std::pair<cmd, std::vector<std::string>>
-        get_cmd() = 0;
-        
-        virtual ~user_interface() {
+                get_cmd() = 0;
+
+        virtual void
+        bad_input() = 0;
+
+        virtual
+        ~user_interface() {
         }
     } ;
 
     class console : public user_interface {
     private:
         std::istream & is;
-        
+
     public:
-        explicit console(std::istream & is_) : is(is_) {
+
+        explicit
+        console(std::istream & is_) : is(is_) {
         }
-        
-        std::pair<cmd, std::vector<std::string>> 
+
+        std::pair<cmd, std::vector<std::string>>
         get_cmd() override;
-        
+
+        void
+        bad_input() override;
+
         ~console() {
         }
-        
+
     private:
         std::vector<std::string>
         parse_line(const std::string &);

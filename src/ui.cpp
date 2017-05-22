@@ -52,6 +52,12 @@ namespace magicSearchEngine {
         return make_pair(cmd::none, opts);
     }
 
+    void
+    console::bad_input() {
+        cout << "Error while parsing last input occured. Use command \"help\".";
+        cout << endl;
+    }
+
     vector<string>
     console::parse_line(const string & line) {
         vector<string> tokens;

@@ -20,7 +20,7 @@ main(int argc, char *argv[]) {
         auto command = cmd_ui.get_cmd();
         switch (command.first) {
             case cmd::error:
-                cout << "Error while parsing input occured." << endl;
+                cmd_ui.bad_input();
                 return 1;
             case cmd::end_of_input:
             case cmd::exit:
