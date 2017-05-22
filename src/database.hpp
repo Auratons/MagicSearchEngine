@@ -72,9 +72,16 @@ namespace magicSearchEngine {
         virtual const std::unordered_map<std::string, std::string> &
         get_mana() const = 0;
 
-        virtual ~Database() {
+        virtual const std::vector<std::string> &
+        get_keyword_abilities() const = 0;
+
+        virtual const std::vector<std::string> &
+        get_keyword_actions() const = 0;
+
+        virtual
+        ~Database() {
         };
-    };
+    } ;
 
     class JSONDatabase : public Database {
     private:
@@ -98,6 +105,9 @@ namespace magicSearchEngine {
         std::unordered_map<std::string, std::string> layout;
         std::unordered_map<std::string, std::string> colors;
         std::unordered_map<std::string, std::string> mana;
+
+        std::vector<std::string> keyword_abilities;
+        std::vector<std::string> keyword_actions;
 
     public:
         void
@@ -124,12 +134,18 @@ namespace magicSearchEngine {
         const std::unordered_map<std::string, std::string> &
         get_mana() const override;
 
+        const std::vector<std::string> &
+        get_keyword_abilities() const override;
+
+        const std::vector<std::string> &
+        get_keyword_actions() const override;
+
         ~JSONDatabase() {
         }
     private:
         std::vector<Card>
         load_cards(const nlohmann::json & data);
-    };
+    } ;
 
     /*
      * This exception is being used for throwing in case of 
@@ -151,7 +167,7 @@ namespace magicSearchEngine {
 
         ~bad_optional_access() throw () {
         }
-    };
+    } ;
 }
 
 #endif /* DATABASE_HPP */
