@@ -58,18 +58,21 @@ namespace magicSearchEngine {
         size_t line_length = line.length();
         bool double_quote = false;
         bool simple_quote = false;
-        int token_length;
-        for (int i = 0; i < line_length; i++) {
-            int start = i;
-            if (line[i] == '\"') {
+        size_t token_length;
+        char dq_letter = '\"';
+        char sq_letter = '\'';
+        char s_letter = ' ';
+        for (size_t i = 0; i < line_length; i++) {
+            size_t start = i;
+            if (line[i] == dq_letter) {
                 double_quote = true;
             }
-            else if (line[i] == '\'') simple_quote = true;
+            else if (line[i] == sq_letter) simple_quote = true;
 
             if (double_quote) {
                 i++;
                 start++;
-                while (i < line_length && line[i] != '\"')
+                while (i < line_length && line[i] != dq_letter)
                     i++;
                 if (i < line_length)
                     double_quote = false;
@@ -78,7 +81,7 @@ namespace magicSearchEngine {
             }
             else if (simple_quote) {
                 i++;
-                while (i < line_length && line[i] != '\'')
+                while (i < line_length && line[i] != sq_letter)
                     i++;
                 if (i < line_length)
                     simple_quote = false;
@@ -86,7 +89,7 @@ namespace magicSearchEngine {
                 i++;
             }
             else {
-                while (i < line_length && line[i] != ' ')
+                while (i < line_length && line[i] != s_letter)
                     i++;
                 token_length = i - start;
             }
@@ -95,7 +98,7 @@ namespace magicSearchEngine {
         if (double_quote || simple_quote) {
             cout << "One of the quotes is open." << endl;
             return vector<string>();
-        }        
+        }
         return move(tokens);
     }
 }
