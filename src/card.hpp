@@ -44,6 +44,9 @@ namespace magicSearchEngine {
         const std::string * color;
         short count;
 
+        manaCnt() : color(nullptr), count(0) {
+        }
+
         manaCnt(const std::string * c, short cnt) : color(c), count(cnt) {
         }
 
@@ -52,6 +55,7 @@ namespace magicSearchEngine {
 
     inline std::ostream & operator<<(std::ostream & os, const manaCnt & m) {
         os << *(m.color) << ": " << m.count;
+        return os;
     }
 
     struct feature {
@@ -77,6 +81,7 @@ namespace magicSearchEngine {
             os << "+*";
         if (f.asterics)
             os << "*";
+        return os;
     }
 
     using layout_t     = std::string;                       // Default: ""
@@ -166,6 +171,23 @@ namespace magicSearchEngine {
         std::string
         get_mana_symbol(std::string & s);
     } ;
+
+    /*
+     * Auxiliar function that can print anything that can be traversed via ':'
+     * notation to ostream os. Before printing itself the values in the to_print
+     * can be amended via f function.
+     */
+    template<typename T, typename Function>
+    inline void
+    print_vec(std::ostream & os, const T & to_print, const std::string & name, Function && f) {
+        if (to_print.size() != 0) {
+            os << name;
+            for (auto && m : to_print) {
+                os << f(m) << " ";
+            }
+            os << std::endl;
+        }
+    }
 }
 #endif /* CARD_HPP */
 

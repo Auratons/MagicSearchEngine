@@ -52,18 +52,10 @@ namespace magicSearchEngine {
         set_subtypes(card);
     }
 
-    template<typename T, typename Function>
-    inline void
-    print_vec(std::ostream & os, const T & to_print, const string & name, Function && f) {
-        if (to_print.size() != 0) {
-            os << name;
-            for (auto && m : to_print) {
-                os << f(m) << " ";
-            }
-            os << endl;
-        }
-    }
-
+    /*
+     * Prints a card -- simple tries all possible fields for presence. If the
+     * field is not default it will be printed.
+     */
     std::ostream & operator<<(std::ostream & os, const Card & card) {
         os << "Name: " << card.get_name() << endl;
 
@@ -90,7 +82,7 @@ namespace magicSearchEngine {
         const feature & ff = card.get_toughness();
         if (!ff.asterics && !ff.half && ff.whole_part != INT_MIN)
             os << "Toughness: " << card.get_toughness() << endl;
-        
+
         if (card.get_hand() != INT_MIN)
             os << "Hand: " << card.get_hand();
         if (card.get_loyalty() != INT_MIN)
@@ -100,8 +92,14 @@ namespace magicSearchEngine {
 
         if (card.get_text() != "")
             os << "Text: " << card.get_text() << endl;
+        return os;
     }
 
+    /*
+     * These basic setters cannot be simply traits-templated nor shortened
+     * with ?: notation because of properties of the json library. This applies
+     * for name, text, loyalty, hand, life card fields.
+     */
     void
     Card::set_name(const card_t & card) {
         if (card.find("name") != card.end()) {
@@ -131,8 +129,8 @@ namespace magicSearchEngine {
         feature ftr;
         if (card.find("power") != card.end()) {
             std::string pow = card["power"];
-            if (pow.find('*') != -1) ftr.asterics = true;
-            if (pow.find('.') != -1) ftr.half = true;
+            if (pow.find('*') != string::npos) ftr.asterics = true;
+            if (pow.find('.') != string::npos) ftr.half = true;
             if (pow[0] == '*') goto final_set;
             if (pow == ".5") goto final_set;
             ftr.whole_part = std::stoi(pow);
@@ -146,8 +144,8 @@ namespace magicSearchEngine {
         feature ftr;
         if (card.find("toughness") != card.end()) {
             std::string tou = card["toughness"];
-            if (tou.find('*') != -1) ftr.asterics = true;
-            if (tou.find('.') != -1) ftr.half = true;
+            if (tou.find('*') != string::npos) ftr.asterics = true;
+            if (tou.find('.') != string::npos) ftr.half = true;
             if (tou[0] == '*') goto final_set;
             if (tou == ".5") goto final_set;
             ftr.whole_part = std::stoi(tou);
@@ -186,9 +184,6 @@ namespace magicSearchEngine {
         }
     }
 
-    /*
-     * Some of these can be traits-templated, maybe in the future.
-     */
     void
     Card::set_layout(const card_t & card) {
         const auto & layouts = db->get_layout();
@@ -208,13 +203,13 @@ namespace magicSearchEngine {
 
     void
     Card::set_names(const card_t & card) {
-        std::vector<std::string> names;
+        std::vector<std::string> names_;
         if (card.find("names") != card.end()) {
             for (std::string name_ : card["names"]) {
-                names.push_back(name_);
+                names_.push_back(name_);
             }
         }
-        names = std::move(names);
+        names = std::move(names_);
     }
 
     /*
@@ -226,17 +221,24 @@ namespace magicSearchEngine {
         manaCost_t cards_cost;
         try {
             if (card.find("manaCost") != card.end()) {
-                std::string manaCost = card.at("manaCost");
-                string str = get_mana_symbol(manaCost);
+                std::string manaCost_ = card.at("manaCost");
+                string str = get_mana_symbol(manaCost_); // Has side effects on arg!
+                // Each cycle one "{<mana>}" substr is removed from manaCost
+                // and accordingly processed.
                 while (str.size() != 0) {
                     const string & mana_s = db_mana.at(str);
-                    if (cards_cost.size() == 0 || strcmp((*(cards_cost[cards_cost.size() - 1].color)).c_str(), mana_s.c_str()) != 0) {// *(cards_cost[cards_cost.size() - 1].color) != mana_s) {
+                    // Either the cards_cost is yet empty or ("in row" assumtion)
+                    // the last element of cards_cost is not the same as currently read.
+                    if (cards_cost.size() == 0 || *(cards_cost[cards_cost.size() - 1].color) != mana_s) {
                         cards_cost.push_back(manaCnt(&mana_s, 1));
+                        // strcmp((*(cards_cost[cards_cost.size() - 1].color)).c_str(), mana_s.c_str()) != 0) {// 
                     }
+                        // If the last element of cards_cost is the same as currently
+                        // read we just enlarge the count of that mana type.
                     else {
                         cards_cost[cards_cost.size() - 1].count++;
                     }
-                    str = get_mana_symbol(manaCost);
+                    str = get_mana_symbol(manaCost_); // Has side effects on arg!
                 }
             }
         }
