@@ -540,14 +540,14 @@ namespace magicSearchEngine {
 
     std::vector<Card>
     JSONDatabase::load_cards(const json & data) {
-        std::vector<Card> cards;
+        std::vector<Card> cards_;
 
         for (auto && card : data) {
             Card entry{card, this};
-            cards.push_back(entry);
+            cards_.push_back(entry);
         }
 
-        return std::move(cards);
+        return std::move(cards_);
     }
 
     const std::unordered_map<std::string, std::string> &
