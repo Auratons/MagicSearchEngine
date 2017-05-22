@@ -1,5 +1,6 @@
 #include <thread>
 #include <utility>
+#include <istream>
 
 #include "database.hpp"
 #include "ui.hpp"
@@ -9,13 +10,12 @@ using namespace magicSearchEngine;
 using namespace std;
 
 int
-main(int argc, char *argv[])
-{
+main(int argc, char *argv[]) {
     JSONDatabase database;
     database.load_database();
     search_engine oraculum(database);
     console cmd_ui(cin);
-    
+
     while (true) {
         auto command = cmd_ui.get_cmd();
         switch (command.first) {
@@ -29,11 +29,16 @@ main(int argc, char *argv[])
                 this_thread::yield();
                 break;
             case cmd::find:
+            {
                 auto res = oraculum.search_for(command.second[1]);
                 if (res == nullptr)
-                    cout << "Demanded card was not found" << endl;
+                    cout << "Demanded card was not found." << endl;
                 else
                     cout << *(res) << endl;
+                break;
+            }
+            default:
+                this_thread::yield();
                 break;
         }
     }
