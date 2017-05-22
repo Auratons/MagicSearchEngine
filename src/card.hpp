@@ -44,26 +44,61 @@ namespace magicSearchEngine {
         const std::string * color;
         short count;
 
+        manaCnt() : color(nullptr), count(0) {
+        }
+
         manaCnt(const std::string * c, short cnt) : color(c), count(cnt) {
         }
-    };
 
-    using layout_t = std::string &;
-    using name_t = std::string;
-    using names_t = std::vector<std::string>;
-    using manaCost_t = std::vector<manaCnt>;
-    using colors_t = std::vector<const std::string *>;
+        friend std::ostream & operator<<(std::ostream & os, const manaCnt & m);
+    } ;
+
+    inline std::ostream & operator<<(std::ostream & os, const manaCnt & m) {
+        os << *(m.color) << ": " << m.count;
+        return os;
+    }
+
+    struct feature {
+        int whole_part;
+        bool half;
+        bool asterics;
+
+        feature() : whole_part(INT_MIN), half(false), asterics(false) {
+        }
+
+        feature(int wp, bool hf, bool as) : whole_part(wp), half(hf), asterics(as) {
+        }
+
+        friend std::ostream & operator<<(std::ostream & os, const feature & f);
+    } ;
+
+    inline std::ostream & operator<<(std::ostream & os, const feature & f) {
+        if (f.whole_part != INT_MIN)
+            os << f.whole_part;
+        if (f.half)
+            os << ".5";
+        if (f.whole_part != INT_MIN && f.asterics)
+            os << "+*";
+        if (f.asterics)
+            os << "*";
+        return os;
+    }
+
+    using layout_t     = std::string;                       // Default: ""
+    using name_t       = std::string;                       // Default: ""
+    using names_t      = std::vector<std::string>;
+    using manaCost_t   = std::vector<manaCnt>;
+    using colors_t     = std::vector<const std::string *>;
     using supertypes_t = std::vector<const std::string *>;
-    using types_t = std::vector<const std::string *>;
-    using subtypes_t = std::vector<const std::string *>;
-    using text_t = std::string;
-    using power_t = int;
-    using toughness_t = int;
-    using loyalty_t = int;
-    using hand_t = int;
-    using life_t = int;
-
-    using card_t = const nlohmann::basic_json<std::map, std::vector,
+    using types_t      = std::vector<const std::string *>;
+    using subtypes_t   = std::vector<const std::string *>;
+    using text_t       = std::string;                       // Default: ""
+    using power_t      = feature;                           // Default: {INT_MIN, false, false}
+    using toughness_t  = feature;                           // Default: {INT_MIN, false, false}
+    using loyalty_t    = int;                               // Default: INT_MIN
+    using hand_t       = int;                               // Default: INT_MIN
+    using life_t       = int;                               // Default: INT_MIN
+    using card_t       = const nlohmann::basic_json<std::map, std::vector,
             std::__cxx11::basic_string<char, std::char_traits<char>,
             std::allocator<char> >, bool, long, unsigned long, double,
             std::allocator, nlohmann::adl_serializer> &;
@@ -73,165 +108,86 @@ namespace magicSearchEngine {
 
     class Card {
     private:
-        const Database * db;
-        const layout_t layout;
-        const name_t name;
-        const names_t names;
-        const manaCost_t manaCost;
-        const colors_t colors;
-        const supertypes_t supertypes;
-        const types_t types;
-        const subtypes_t subtypes;
-        const text_t text;
-//        const power_t power;
-//        const toughness_t toughness;
-        const loyalty_t loyalty;
-        const hand_t hand;
-        const life_t life;
+        const Database* db;
+        layout_t        layout;
+        name_t          name;
+        names_t         names;
+        manaCost_t      manaCost;
+        colors_t        colors;
+        supertypes_t    supertypes;
+        types_t         types;
+        subtypes_t      subtypes;
+        text_t          text;
+        power_t         power;
+        toughness_t     toughness;
+        loyalty_t       loyalty;
+        hand_t          hand;
+        life_t          life;
 
     public:
-//        // After quite long time spent by trying to solve this nicely, 
-//        // I decided for a macro. #sorryjako
-//#define SET(attr, fail) if (card.find("attr") != card.end()) attr = card["attr"]; else attr = fail
-
-        Card(const card_t & card, const Database * dat) :
-        db(dat),
-        name(set_name(card)),
-        text(set_text(card)),
-//        power(set_power(card)),
-//        toughness(set_toughness(card)),
-        loyalty(set_loyalty(card)),
-        hand(set_hand(card)),
-        life(set_life(card)),
-        layout(parse_layout(card)),
-        names(parse_names(card)),
-        manaCost(parse_manaCost(card)),
-        colors(parse_colors(card)),
-        supertypes(parse_supertypes(card)),
-        types(parse_types(card)),
-        subtypes(parse_subtypes(card)) 
-        {
-        }
-
-        const layout_t & get_layout() const;
-        const name_t & get_name() const;
-        const names_t & get_names() const;
-        const manaCost_t & get_manaCost() const;
-        const colors_t & get_colors() const;
+        Card(const card_t & card, const Database * dat);
+        friend std::ostream & operator<<(std::ostream &, const Card &) ;
+        /*
+         * Getters.
+         */
+        const layout_t &     get_layout() const;
+        const name_t &       get_name() const;
+        const names_t &      get_names() const;
+        const manaCost_t &   get_manaCost() const;
+        const colors_t &     get_colors() const;
         const supertypes_t & get_supertypes() const;
-        const types_t & get_types() const;
-        const subtypes_t & get_subtypes() const;
-        const text_t & get_text() const;
-//        const power_t & get_power() const;
-//        const toughness_t & get_toughness() const;
-        const loyalty_t & get_loyalty() const;
-        const hand_t & get_hand() const;
-        const life_t & get_life() const;
+        const types_t &      get_types() const;
+        const subtypes_t &   get_subtypes() const;
+        const text_t &       get_text() const;
+        const power_t &      get_power() const;
+        const toughness_t &  get_toughness() const;
+        const loyalty_t &    get_loyalty() const;
+        const hand_t &       get_hand() const;
+        const life_t &       get_life() const;
 
     private:
-        const layout_t
-        parse_layout(const card_t & card);
+        /*
+         * Setters. JSON card record can, but mustn't contain field, so the
+         * following methods must check presence of given field and if absent,
+         * fill card with some predefined default variable (see usings above).
+         */
+        void set_name(const card_t & card);
+        void set_text(const card_t & card);
+        void set_power(const card_t & card);
+        void set_toughness(const card_t & card);
+        void set_loyalty(const card_t & card);
+        void set_hand(const card_t & card);
+        void set_life(const card_t & card);
+        // Following setters parse more complicated input (slower).
+        void set_layout(const card_t & card);
+        void set_names(const card_t & card);
+        void set_manaCost(const card_t & card);
+        void set_colors(const card_t & card);
+        void set_supertypes(const card_t & card);
+        void set_types(const card_t & card);
+        void set_subtypes(const card_t & card);
 
-        const names_t
-        parse_names(const card_t & card);
-
-        const manaCost_t
-        parse_manaCost(const card_t & card);
-
-        const colors_t
-        parse_colors(const card_t & card);
-
-        const supertypes_t
-        parse_supertypes(const card_t & card);
-
-        const types_t
-        parse_types(const card_t & card);
-
-        const subtypes_t
-        parse_subtypes(const card_t & card);
-
+        // An auxiliary method for set_manaCost.
         std::string
         get_mana_symbol(std::string & s);
+    } ;
 
-        const name_t
-        set_name(const card_t & card) {
-            name_t x;
-            if (card.find("name") != card.end()) {
-                x = card["name"];
-                return x;
+    /*
+     * Auxiliar function that can print anything that can be traversed via ':'
+     * notation to ostream os. Before printing itself the values in the to_print
+     * can be amended via f function.
+     */
+    template<typename T, typename Function>
+    inline void
+    print_vec(std::ostream & os, const T & to_print, const std::string & name, Function && f) {
+        if (to_print.size() != 0) {
+            os << name;
+            for (auto && m : to_print) {
+                os << f(m) << " ";
             }
-            else
-                return "";
+            os << std::endl;
         }
-
-        const text_t
-        set_text(const card_t & card) {
-            text_t x;
-            if (card.find("text") != card.end()) {
-                x = card["text"];
-                return x;
-            }
-            else
-                return "";
-        }
-
-        // TODO an asterix can e included
-        const power_t
-        set_power(const card_t & card) {
-            power_t x;
-            if (card.find("power") != card.end()) {
-                x = card["power"];
-                return x;
-            }
-            else
-                return INT_MIN;
-        }
-
-        // TODO an asterix can e included
-        const toughness_t
-        set_toughness(const card_t & card) {
-            toughness_t x;
-            if (card.find("toughness") != card.end()) {
-                x = card["toughness"];
-                return x;
-            }
-            else
-                return INT_MIN;
-        }
-
-        const loyalty_t
-        set_loyalty(const card_t & card) {
-            loyalty_t x;
-            if (card.find("loyalty") != card.end()) {
-                x = card["loyalty"];
-                return x;
-            }
-            else
-                return INT_MIN;
-        }
-
-        const hand_t
-        set_hand(const card_t & card) {
-            hand_t x;
-            if (card.find("hand") != card.end()) {
-                x = card["hand"];
-                return x;
-            }
-            else
-                return INT_MIN;
-        }
-
-        const life_t
-        set_life(const card_t & card) {
-            life_t x;
-            if (card.find("life") != card.end()) {
-                x = card["life"];
-                return x;
-            }
-            else
-                return INT_MIN;
-        }
-    };
+    }
 }
 #endif /* CARD_HPP */
 
