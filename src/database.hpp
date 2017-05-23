@@ -36,6 +36,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <unordered_set>
 #include <unordered_map>
 #include "src/card.hpp"
 #include "src/json.hpp"
@@ -72,10 +73,10 @@ namespace magicSearchEngine {
         virtual const std::unordered_map<std::string, std::string> &
         get_mana() const = 0;
 
-        virtual const std::vector<std::string> &
+        virtual const std::unordered_set<std::string> &
         get_keyword_abilities() const = 0;
 
-        virtual const std::vector<std::string> &
+        virtual const std::unordered_set<std::string> &
         get_keyword_actions() const = 0;
 
         virtual
@@ -106,8 +107,8 @@ namespace magicSearchEngine {
         std::unordered_map<std::string, std::string> colors;
         std::unordered_map<std::string, std::string> mana;
 
-        std::vector<std::string> keyword_abilities;
-        std::vector<std::string> keyword_actions;
+        std::unordered_set<std::string> keyword_abilities;
+        std::unordered_set<std::string> keyword_actions;
 
     public:
         void
@@ -134,10 +135,10 @@ namespace magicSearchEngine {
         const std::unordered_map<std::string, std::string> &
         get_mana() const override;
 
-        const std::vector<std::string> &
+        const std::unordered_set<std::string> &
         get_keyword_abilities() const override;
 
-        const std::vector<std::string> &
+        const std::unordered_set<std::string> &
         get_keyword_actions() const override;
 
         ~JSONDatabase() {
