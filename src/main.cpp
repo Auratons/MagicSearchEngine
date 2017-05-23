@@ -14,6 +14,7 @@ main(int argc, char *argv[]) {
     JSONDatabase database;
     database.load_database();
     search_engine oraculum(database);
+    oraculum.create_index();
     console cmd_ui(cin);
 
     while (true) {

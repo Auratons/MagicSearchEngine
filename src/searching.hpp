@@ -42,20 +42,20 @@ namespace magicSearchEngine {
     private:
         const Database & db;
         std::vector<std::set<std::string> > index;
-        std::vector<std::string> stop_words;
+        bool index_was_loaded;
 
     public:
-        search_engine(const Database & db_) : db(db_) {
+        search_engine(const Database & db_) : db(db_), index_was_loaded(false) {
         }
         
         void
-        create_index(const std::vector<Card> &);
+        create_index();
         
         const Card *
         search_for(const std::string &);
 
-        const Card *
-        find_similar(const std::string &, size_t cnt);
+//        std::vector<const Card &>
+//        find_similar(const std::string &, size_t cnt);
     } ;
 }
 
