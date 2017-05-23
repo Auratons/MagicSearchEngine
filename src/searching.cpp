@@ -713,7 +713,8 @@ namespace magicSearchEngine {
                 // We build index only for lowercase words.
                 transform(word.begin(), word.end(), word.begin(), ::tolower);
                 // Also we want to remove punctuation from whitespace-cut words.
-                word.erase(remove_if(word.begin(), word.end(), [](char x) { return ispunct(x); }), word.end());
+                word.erase(remove_if(word.begin(), word.end(), [](char x) {
+                    return ispunct(x); }), word.end());
                 // Stop words also do not contain punctuation (you'll).
                 if (stop_words.count(word) == 0) {
                     bucket.insert(word);
@@ -734,15 +735,87 @@ namespace magicSearchEngine {
         return nullptr;
     }
 
-    //    vector<const Card &>
-    //    search_engine::find_similar(const std::string & card_name, size_t cnt) {
-    //        if (!index_was_loaded)
-    //            throw bad_optional_access("Firstly you must create_index().");
-    //        // TODO check instantiation of index
-    //        // find the same type set or other "similar" base set
-    //        // check intersections, use vector of score, keywords have multiplicative
-    //        // bonus
-    //        // than sort, tak first cnt
-    //        //return vector<Card&>();
-    //    }
+    struct {
+
+        bool operator()(pair<size_t, const Card *> a, pair<size_t, const Card *> b) const {
+            return a.first < b.first;
+        }
+    } customLess;
+
+    const vector<const Card *> &
+    search_engine::find_similar(const std::string & card_name, size_t cnt) {
+        // Firstly we check if the search_engine is properly instantiated.
+        if (!index_was_loaded)
+            throw bad_optional_access("Firstly you must create_index().");
+        // Then we linearly find the card to which we search for similar.
+        const Card * base_card = search_for(card_name);
+        if (!base_card) {
+            return move(vector<const Card *>());
+        }
+        // We find and sort subsets of all cards that share types of base_card.
+        using cards_with_type = vector<const Card *>;
+        vector<cards_with_type> base_sets;
+        for (const string * type : base_card->get_types()) {
+            cards_with_type && typeset = get_type(*type);
+            sort(typeset.begin(), typeset.end());
+            base_sets.push_back(typeset);
+        }
+        // Now we find intersection of all typesets.
+        vector<const Card *> & intersection = base_sets[0];
+        if (base_sets.size() != 1) {
+            size_t j = base_sets.size();
+            for (size_t i = 1; i < j; ++i) {
+                vector<const Card *> temp;
+                set_intersection(intersection.begin(), intersection.end(),
+                        base_sets[i].begin(), base_sets[i].end(),
+                        back_inserter(temp));
+                swap(temp, intersection);
+            }
+        }
+        // Let's delete base_card from intersection.
+        auto && it = find(begin(intersection), end(intersection), base_card);
+        if (it != end(intersection))
+            intersection.erase(it);
+        // Now we define a vector space for fields of cards and turn all fields
+        // to numeral values. For text fields we use method from full-text search.
+        // The vector space has dimension of 9 for layout, manaCost, colors, text,
+        // power, toughness, loyalty, hand, life.
+        vector<pair<size_t, const Card *> > distances;
+        for (const Card * card : intersection) {
+            distances.push_back(make_pair(get_distance_from(card), card));
+        }
+        sort(begin(distances), end(distances), customLess);
+        vector<const Card *> res;
+        for (size_t i = 0; i < cnt; ++i) {
+            res.push_back(distances[i].second);
+        }
+        return move(res);
+    }
+
+    /*
+     * Returns all cards that as a one of them types have specified type.
+     * The result is intended to be used for making set intersection in
+     * similarity search. Vector is used, because there is an assumption about
+     * db.get_cards(). Cards in json file are sorted, so as an assumption sorting
+     * probably sorted vector will be cheaper than logarithmic adding to std::set.
+     */
+    vector<const Card *>
+    search_engine::get_type(const string & type) {
+        vector<const Card *> res;
+        const vector<Card> & cards = db.get_cards();
+        for (const Card & card : cards) {
+            const types_t & card_types = card.get_types();
+            // Typically, size of card_types is 1,2, only for one it's more.
+            for (auto && type_ : card_types) {
+                if ((*type_) == type)
+                    res.push_back(&card);
+            }
+        }
+        return move(res);
+    }
+
+    size_t
+    search_engine::get_distance_from(const Card * base_card) {
+        return 0;
+    }
 }

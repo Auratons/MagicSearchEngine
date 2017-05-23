@@ -54,8 +54,15 @@ namespace magicSearchEngine {
         const Card *
         search_for(const std::string &);
 
-//        std::vector<const Card &>
-//        find_similar(const std::string &, size_t cnt);
+        const std::vector<const Card *> &
+        find_similar(const std::string &, size_t cnt);
+        
+        std::vector<const Card *>
+        get_type(const std::string &);
+        
+    private:
+        size_t
+        get_distance_from(const Card *);
     } ;
 }
 
