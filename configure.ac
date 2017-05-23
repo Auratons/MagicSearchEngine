@@ -14,6 +14,13 @@ AC_PROG_CXX
 # Checks for libraries.
 #PKG_CHECK_MODULES([JSONCPP], [jsoncpp])
 
+AX_PTHREAD( [
+            AC_DEFINE(HAVE_PTHREAD,1,[Define if you have POSIX threads libraries and header files.])
+            CLIBS="$PTHREAD_LIBS $LIBS"
+            CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
+            LDFLAGS="$LDFLAGS $PTHREAD_CFLAGS"
+            CC="$PTHREAD_CC"],[])
+
 # Checks for header files.
 AC_STDC_HEADERS
 
