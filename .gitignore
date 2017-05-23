@@ -77,3 +77,13 @@ nbproject/
 
 # backups
 *~
+
+COPYING
+README
+Makefile
+config.h
+config.log
+config.status
+src/.deps/
+src/MagicSearchEngine
+src/Makefile
