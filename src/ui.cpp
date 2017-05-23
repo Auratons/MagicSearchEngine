@@ -48,6 +48,8 @@ namespace magicSearchEngine {
             return make_pair(cmd::parse_error, opts);
         if (opts[0] == "find")
             return make_pair(cmd::find, opts);
+        if (opts[0] == "similar")
+            return make_pair(cmd::similar, opts);
 
         return make_pair(cmd::none, opts);
     }
