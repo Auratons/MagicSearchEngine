@@ -113,6 +113,9 @@ namespace magicSearchEngine {
     public:
         void
         load_database() override;
+        
+        bool
+        is_ready() const;
 
         const std::vector<Card> &
         get_cards() const override;

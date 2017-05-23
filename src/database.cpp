@@ -72,8 +72,8 @@ namespace magicSearchEngine {
         types["Vanguard"] = "Vanguard";
         types["Scheme"] = "Scheme";
         types["Conspiracy"] = "Conspiracy";
-        types["Scariest"] = "Scariest";
-        types["You'll"] = "You'll";
+        types["Scariest"] = "Scariest"; // Because of Big Furry Monster:
+        types["You'll"] = "You'll";     // The Scariest Creature You'll Ever See
         types["See"] = "See";
         types["Ever"] = "Ever";
         // </editor-fold>
@@ -700,7 +700,11 @@ namespace magicSearchEngine {
         was_db_loaded = true;
         cards = load_cards(data);
         ifs.close();
-
+    }
+    
+    bool
+    JSONDatabase::is_ready() const {
+        return was_db_loaded;
     }
 
     std::vector<Card>
