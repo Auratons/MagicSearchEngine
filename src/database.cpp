@@ -28,6 +28,7 @@
 #include <vector>
 #include <exception>
 #include <unordered_map>
+#include <unordered_set>
 #include "src/database.hpp"
 #include "src/card.hpp"
 #include "src/json.hpp"
@@ -532,6 +533,170 @@ namespace magicSearchEngine {
         mana["Y"] = "Y";
         mana["Z"] = "Z";
         // </editor-fold>
+        // <editor-fold defaultstate="collapsed" desc="keyword_abilities instantiation">
+        keyword_abilities.insert("deathtouch");
+        keyword_abilities.insert("defender");
+        keyword_abilities.insert("double strike");
+        keyword_abilities.insert("enchant");
+        keyword_abilities.insert("equip");
+        keyword_abilities.insert("first strike");
+        keyword_abilities.insert("flash");
+        keyword_abilities.insert("flying");
+        keyword_abilities.insert("haste");
+        keyword_abilities.insert("hexproof");
+        keyword_abilities.insert("indestructible");
+        keyword_abilities.insert("intimidate");
+        keyword_abilities.insert("landwalk");
+        keyword_abilities.insert("lifelink");
+        keyword_abilities.insert("protection");
+        keyword_abilities.insert("reach");
+        keyword_abilities.insert("shroud");
+        keyword_abilities.insert("trample");
+        keyword_abilities.insert("vigilance");
+        keyword_abilities.insert("banding");
+        keyword_abilities.insert("rampage");
+        keyword_abilities.insert("cumulative upkeep");
+        keyword_abilities.insert("flanking");
+        keyword_abilities.insert("phasing");
+        keyword_abilities.insert("buyback");
+        keyword_abilities.insert("shadow");
+        keyword_abilities.insert("cycling");
+        keyword_abilities.insert("echo");
+        keyword_abilities.insert("horsemanship");
+        keyword_abilities.insert("fading");
+        keyword_abilities.insert("kicker");
+        keyword_abilities.insert("flashback");
+        keyword_abilities.insert("madness");
+        keyword_abilities.insert("fear");
+        keyword_abilities.insert("morph");
+        keyword_abilities.insert("amplify");
+        keyword_abilities.insert("provoke");
+        keyword_abilities.insert("storm");
+        keyword_abilities.insert("affinity");
+        keyword_abilities.insert("entwine");
+        keyword_abilities.insert("modular");
+        keyword_abilities.insert("sunburst");
+        keyword_abilities.insert("bushido");
+        keyword_abilities.insert("soulshift");
+        keyword_abilities.insert("splice");
+        keyword_abilities.insert("offering");
+        keyword_abilities.insert("ninjutsu");
+        keyword_abilities.insert("epic");
+        keyword_abilities.insert("convoke");
+        keyword_abilities.insert("dredge");
+        keyword_abilities.insert("transmute");
+        keyword_abilities.insert("bloodthirst");
+        keyword_abilities.insert("haunt");
+        keyword_abilities.insert("replicate");
+        keyword_abilities.insert("forecast");
+        keyword_abilities.insert("graft");
+        keyword_abilities.insert("recover");
+        keyword_abilities.insert("ripple");
+        keyword_abilities.insert("split second");
+        keyword_abilities.insert("suspend");
+        keyword_abilities.insert("vanishing");
+        keyword_abilities.insert("absorb");
+        keyword_abilities.insert("aura swap");
+        keyword_abilities.insert("delve");
+        keyword_abilities.insert("fortify");
+        keyword_abilities.insert("frenzy");
+        keyword_abilities.insert("gravestorm");
+        keyword_abilities.insert("poisonous");
+        keyword_abilities.insert("transfigure");
+        keyword_abilities.insert("champion");
+        keyword_abilities.insert("changeling");
+        keyword_abilities.insert("evoke");
+        keyword_abilities.insert("hideaway");
+        keyword_abilities.insert("prowl");
+        keyword_abilities.insert("reinforce");
+        keyword_abilities.insert("conspire");
+        keyword_abilities.insert("persist");
+        keyword_abilities.insert("wither");
+        keyword_abilities.insert("retrace");
+        keyword_abilities.insert("devour");
+        keyword_abilities.insert("exalted");
+        keyword_abilities.insert("unearth");
+        keyword_abilities.insert("cascade");
+        keyword_abilities.insert("annihilator");
+        keyword_abilities.insert("level up");
+        keyword_abilities.insert("rebound");
+        keyword_abilities.insert("totem armor");
+        keyword_abilities.insert("infect");
+        keyword_abilities.insert("battle cry");
+        keyword_abilities.insert("living weapon");
+        keyword_abilities.insert("undying");
+        keyword_abilities.insert("miracle");
+        keyword_abilities.insert("soulbond");
+        keyword_abilities.insert("overload");
+        keyword_abilities.insert("scavenge");
+        keyword_abilities.insert("unleash");
+        keyword_abilities.insert("cipher");
+        keyword_abilities.insert("evolve");
+        keyword_abilities.insert("extort");
+        keyword_abilities.insert("fuse");
+        keyword_abilities.insert("bestow");
+        keyword_abilities.insert("tribute");
+        keyword_abilities.insert("dethrone");
+        keyword_abilities.insert("hidden agenda");
+        keyword_abilities.insert("outlast");
+        keyword_abilities.insert("prowess");
+        keyword_abilities.insert("dash");
+        keyword_abilities.insert("exploit");
+        keyword_abilities.insert("menace");
+        keyword_abilities.insert("renown");
+        keyword_abilities.insert("awaken");
+        keyword_abilities.insert("devoid");
+        keyword_abilities.insert("ingest");
+        keyword_abilities.insert("myriad");
+        keyword_abilities.insert("surge");
+        keyword_abilities.insert("skulk");
+        keyword_abilities.insert("emerge");
+        keyword_abilities.insert("escalate");
+        keyword_abilities.insert("melee");
+        keyword_abilities.insert("crew");
+        keyword_abilities.insert("fabricate");
+        keyword_abilities.insert("partner");
+        keyword_abilities.insert("undaunted");
+        keyword_abilities.insert("improvise");
+        // </editor-fold>
+        // <editor-fold defaultstate="collapsed" desc="keyword_actions instantiation">
+        keyword_actions.insert("activate");
+        keyword_actions.insert("attach");
+        keyword_actions.insert("cast");
+        keyword_actions.insert("counter");
+        keyword_actions.insert("create");
+        keyword_actions.insert("destroy");
+        keyword_actions.insert("discard");
+        keyword_actions.insert("exchange");
+        keyword_actions.insert("exile");
+        keyword_actions.insert("fight");
+        keyword_actions.insert("play");
+        keyword_actions.insert("regenerate");
+        keyword_actions.insert("reveal");
+        keyword_actions.insert("sacrifice");
+        keyword_actions.insert("scry");
+        keyword_actions.insert("search");
+        keyword_actions.insert("shuffle");
+        keyword_actions.insert("tap");
+        keyword_actions.insert("untap");
+        keyword_actions.insert("fateseal");
+        keyword_actions.insert("clash");
+        keyword_actions.insert("planeswalk");
+        keyword_actions.insert("set in motion");
+        keyword_actions.insert("abandon");
+        keyword_actions.insert("proliferate");
+        keyword_actions.insert("transform");
+        keyword_actions.insert("detain");
+        keyword_actions.insert("populate");
+        keyword_actions.insert("monstrosity");
+        keyword_actions.insert("vote");
+        keyword_actions.insert("bolster");
+        keyword_actions.insert("manifest");
+        keyword_actions.insert("support");
+        keyword_actions.insert("investigate");
+        keyword_actions.insert("meld");
+        keyword_actions.insert("goad");
+        // </editor-fold>
         was_db_loaded = true;
         cards = load_cards(data);
         ifs.close();
@@ -602,6 +767,22 @@ namespace magicSearchEngine {
     JSONDatabase::get_mana() const {
         if (was_db_loaded)
             return mana;
+        else
+            throw bad_optional_access(db_not_loaded);
+    }
+
+    const std::unordered_set<std::string> &
+    JSONDatabase::get_keyword_abilities() const {
+        if (was_db_loaded)
+            return keyword_abilities;
+        else
+            throw bad_optional_access(db_not_loaded);
+    }
+
+    const std::unordered_set<std::string> &
+    JSONDatabase::get_keyword_actions() const {
+        if (was_db_loaded)
+            return keyword_actions;
         else
             throw bad_optional_access(db_not_loaded);
     }
