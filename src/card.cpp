@@ -247,6 +247,7 @@ namespace magicSearchEngine {
                     " does not refer to any mana symbol in the database, check rules.";
             throw std::out_of_range(msg);
         }
+        sort(begin(cards_cost), end(cards_cost));
         manaCost = std::move(cards_cost);
     }
 
@@ -284,6 +285,7 @@ namespace magicSearchEngine {
                     " does not refer to any color in the database, check rules.";
             throw std::out_of_range(msg);
         }
+        sort(begin(card_colors), end(card_colors));
         colors = std::move(card_colors);
     }
 

@@ -49,6 +49,10 @@ namespace magicSearchEngine {
 
         manaCnt(const std::string * c, short cnt) : color(c), count(cnt) {
         }
+        
+        bool operator <(const manaCnt & b) const {
+            return color < b.color;
+        }
 
         friend std::ostream & operator<<(std::ostream & os, const manaCnt & m);
     } ;
