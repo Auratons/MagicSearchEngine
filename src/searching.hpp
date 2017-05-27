@@ -45,24 +45,28 @@ namespace magicSearchEngine {
         bool index_was_loaded;
 
     public:
+
         search_engine(const Database & db_) : db(db_), index_was_loaded(false) {
         }
-        
+
         void
         create_index();
-        
+
         const Card *
         search_for(const std::string &);
 
-        const std::vector<const Card *> &
+        std::vector<const Card *>
         find_similar(const std::string &, size_t cnt);
-        
+
         std::vector<const Card *>
         get_type(const std::string &);
-        
+
     private:
         size_t
-        get_distance_from(const Card *);
+        get_distance(const Card *, const Card *);
+
+        size_t
+        full_text(const Card * card, const Card * base_card);
     } ;
 }
 

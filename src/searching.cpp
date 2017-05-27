@@ -26,6 +26,7 @@
 #include <unordered_set>
 #include <set>
 #include <sstream>
+#include <cmath>
 #include "searching.hpp"
 #include "database.hpp"
 
@@ -742,7 +743,7 @@ namespace magicSearchEngine {
         }
     } customLess;
 
-    const vector<const Card *> &
+    vector<const Card *>
     search_engine::find_similar(const std::string & card_name, size_t cnt) {
         // Firstly we check if the search_engine is properly instantiated.
         if (!index_was_loaded)
@@ -756,7 +757,7 @@ namespace magicSearchEngine {
         using cards_with_type = vector<const Card *>;
         vector<cards_with_type> base_sets;
         for (const string * type : base_card->get_types()) {
-            cards_with_type && typeset = get_type(*type);
+            vector<const Card *> typeset = get_type(*type);
             sort(typeset.begin(), typeset.end());
             base_sets.push_back(typeset);
         }
@@ -782,11 +783,12 @@ namespace magicSearchEngine {
         // power, toughness, loyalty, hand, life.
         vector<pair<size_t, const Card *> > distances;
         for (const Card * card : intersection) {
-            distances.push_back(make_pair(get_distance_from(card), card));
+            distances.push_back(make_pair(get_distance(card, base_card), card));
         }
         sort(begin(distances), end(distances), customLess);
         vector<const Card *> res;
-        for (size_t i = 0; i < cnt; ++i) {
+        size_t j = (cnt < distances.size()) ? cnt : distances.size();
+        for (size_t i = 0; i < j; ++i) {
             res.push_back(distances[i].second);
         }
         return move(res);
@@ -814,8 +816,97 @@ namespace magicSearchEngine {
         return move(res);
     }
 
+    /*
+     * A crucial method. Determines distance between two cards. Current 
+     * implementation is simple, for better results a small research and setting
+     * multiplicative constants should be conducted.
+     */
     size_t
-    search_engine::get_distance_from(const Card * base_card) {
-        return 0;
+    search_engine::get_distance(const Card * card, const Card * base_card) {
+        size_t layout_d = 0;
+        float power_d = 0;
+        float toughness_d = 0;
+        size_t loyalty_d = 0;
+        size_t hand_d = 0;
+        size_t life_d = 0;
+        size_t text_d = 0;
+        size_t colors_d = 0;
+
+        auto && to_float = [](const feature & f1, const feature & f2) {
+            float res = 0;
+            res = abs(f1.whole_part - f2.whole_part);
+            res += 0.5 * abs((int) f1.half - (int) f2.half);
+            res += 50 * abs((int) f1.asterics - (int) f2.asterics);
+            return res;
+        };
+        auto && dist_colors = [](const vector<const string *> & a,
+                const vector<const std::string *> & b) -> size_t {
+                    vector<const string *> intersection;
+                    set_intersection(begin(a), end(a), begin(b), end(b), back_inserter(intersection));
+                    if (intersection.size() == 0)
+                        return 50;
+                    if (intersection.size() == a.size() && intersection.size() == b.size())
+                        return 0;
+                    if (intersection.size() != a.size() && intersection.size() == b.size())
+                        return 10;
+                    if (intersection.size() == a.size() && intersection.size() != b.size())
+                        return 10;
+                    else
+                        return 40;
+                };
+        if (card->get_layout() != base_card->get_layout())
+            layout_d = 1;
+        power_d = to_float(card->get_power(), base_card->get_power());
+        toughness_d = to_float(card->get_toughness(), base_card->get_toughness());
+        loyalty_d = abs(card->get_loyalty() - base_card->get_loyalty());
+        hand_d = abs(card->get_hand() - base_card->get_hand());
+        life_d = abs(card->get_life() - base_card->get_life());
+        text_d = full_text(card, base_card);
+        colors_d = dist_colors(card->get_colors(), base_card->get_colors());
+
+        // We don't need return actual distance with the square root, since we
+        // need only comparability between "distances", only the sum of the
+        // squares is sufficient.
+        return pow(layout_d, 2) +
+                pow(power_d, 2) +
+                pow(toughness_d, 2) +
+                pow(loyalty_d, 2) +
+                pow(hand_d, 2) +
+                pow(life_d, 2) +
+                pow(text_d, 2);
+    }
+
+    /*
+     * Determines distance on text-axis. Firstly we find intersection of indices
+     * for both cards, then evaluate each word in intersection. If the word is
+     * within keywords, it has bigger weight, otherwise smaller. We add up weights,
+     * then return distance as a reciprocal of the sum times 100 since closer
+     * cards means smaller distance in some dimension.
+     */
+    size_t
+    search_engine::full_text(const Card * card, const Card * base_card) {
+        size_t c_pos = card - &(db.get_cards()[0]);
+        size_t bc_pos = base_card - &(db.get_cards()[0]);
+        vector<string> intersection;
+        set<string> c_ind = index[c_pos];
+        set<string> bc_ind = index[bc_pos];
+        set_intersection(begin(c_ind), end(c_ind),
+                begin(bc_ind), end(bc_ind),
+                back_inserter(intersection));
+        size_t res = 0;
+        for (const string & word : intersection) {
+            if (db.get_keyword_abilities().count(word) +
+                    db.get_keyword_actions().count(word) == 0) {
+                res++;
+            }
+            else {
+                res += 2;
+            }
+        }
+        if (intersection.size() == 0)
+            res = 100;
+        else
+            res = 100 / res;
+        return res;
     }
 }
