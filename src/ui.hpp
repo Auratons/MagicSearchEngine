@@ -46,16 +46,14 @@ namespace magicSearchEngine {
         error,
         parse_error,
         find,
-        similar
+        similar,
+        help
     } ;
 
     class user_interface {
     public:
-        virtual std::pair<cmd, std::vector<std::string>>
-                get_cmd() = 0;
-
-        virtual void
-        bad_input() = 0;
+        virtual std::pair<cmd, std::vector<std::string> >
+        get_cmd() = 0;
 
         virtual
         ~user_interface() {
@@ -72,11 +70,8 @@ namespace magicSearchEngine {
         console(std::istream & is_) : is(is_) {
         }
 
-        std::pair<cmd, std::vector<std::string>>
+        std::pair<cmd, std::vector<std::string> >
         get_cmd() override;
-
-        void
-        bad_input() override;
 
         ~console() {
         }

@@ -45,6 +45,10 @@ namespace magicSearchEngine {
             return make_pair(cmd::exit, opts);
         opts = parse_line(input);
         if (opts.size() == 0)
+            return make_pair(cmd::none, opts);
+        if (opts[0] == "h" || opts[0] == "help")
+            return make_pair(cmd::help, opts);
+        if (opts.size() == 1)
             return make_pair(cmd::parse_error, opts);
         if (opts[0] == "find")
             return make_pair(cmd::find, opts);
@@ -52,12 +56,6 @@ namespace magicSearchEngine {
             return make_pair(cmd::similar, opts);
 
         return make_pair(cmd::none, opts);
-    }
-
-    void
-    console::bad_input() {
-        cout << "Error while parsing last input occured. Use command \"help\".";
-        cout << endl;
     }
 
     vector<string>
