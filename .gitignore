@@ -69,7 +69,7 @@ Makefile.in
 nbproject/
 
 # Databate
-*.json
+#*.json
 /src/json.hpp
 
 # notes
